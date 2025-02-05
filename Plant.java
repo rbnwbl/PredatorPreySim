@@ -6,11 +6,13 @@
  */
 public abstract class Plant implements Organism {
     // Whether the plant is alive or not.
-    private boolean alive;
+    protected boolean alive;
+    // The plant's sex, 'M' for 'Male', 'F' for 'Female'.
     private char sex;
     // The plant's location.
-    private Location location;
-    private int age;
+    protected Location location;
+    // The plant's age.
+    protected int age;
     /**
      * Constructor for objects of the Plant class.
      * @param location The plant's location.

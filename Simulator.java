@@ -2,7 +2,7 @@ import java.util.*;
 
 /**
  * A simple predator-prey simulator, based on a rectangular field containing 
- * rabbits and foxes.
+ * zebras and hyenaes.
  * 
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
@@ -14,10 +14,15 @@ public class Simulator
     private static final int DEFAULT_WIDTH = 120;
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
-    // The probability that a fox will be created in any given grid position.
-    private static final double FOX_CREATION_PROBABILITY = 0.02;
-    // The probability that a rabbit will be created in any given position.
-    private static final double RABBIT_CREATION_PROBABILITY = 0.08;    
+    // The probability that a hyena will be created in any given grid position.
+    private static final double HYENA_CREATION_PROBABILITY = 0.02;
+    // The probability that a zebra will be created in any given position.
+    private static final double ZEBRA_CREATION_PROBABILITY = 0.08;    
+    // The probability that a grass plant will be created in any given position.
+    private static final double GRASS_CREATION_PROBABILITY = 0.04;
+    // The probability that a fruit plant will be created in any given position.
+    private static final double FRUIT_CREATION_PROBABILITY = 0.03;
+    
 
     // The current state of the field.
     private Field field;
@@ -79,7 +84,7 @@ public class Simulator
     
     /**
      * Run the simulation from its current state for a single step.
-     * Iterate over the whole field updating the state of each fox and rabbit.
+     * Iterate over the whole field updating the state of each hyena and zebra.
      */
     public void simulateOneStep()
     {
@@ -88,9 +93,9 @@ public class Simulator
         // the next step.
         Field nextFieldState = new Field(field.getDepth(), field.getWidth());
 
-        List<Animal> animals = field.getAnimals();
-        for (Animal anAnimal : animals) {
-            anAnimal.act(field, nextFieldState);
+        List<Organism> organisms = field.getOrganisms();
+        for (Organism anOrganism : organisms) {
+            anOrganism.act(field, nextFieldState);
         }
         
         // Replace the old state with the new one.
@@ -109,9 +114,8 @@ public class Simulator
         populate();
         view.showStatus(step, field);
     }
-    
     /**
-     * Randomly populate the field with foxes and rabbits.
+     * Randomly populate the field with hyenaes and zebras.
      */
     private void populate()
     {
@@ -119,23 +123,32 @@ public class Simulator
         field.clear();
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
-                if(rand.nextDouble() <= FOX_CREATION_PROBABILITY) {
+                if(rand.nextDouble() <= HYENA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Fox fox = new Fox(true, location);
-                    field.placeAnimal(fox, location);
+                    Hyena hyena = new Hyena(true, location);
+                    field.placeOrganism(hyena, location);
+                    System.out.println("H");
                 }
-                else if(rand.nextDouble() <= RABBIT_CREATION_PROBABILITY) {
+                else if (rand.nextDouble() <= GRASS_CREATION_PROBABILITY) {
+                    char sex = (rand.nextDouble() < 0.5) ? 'M' : 'F';
+                    Location location = new Location(row,col);
+                    Grass grass = new Grass(location,sex);
+                    field.placeOrganism(grass,location);
+                    System.out.println("G");
+
+                }
+                else if(rand.nextDouble() <= ZEBRA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Rabbit rabbit = new Rabbit(true, location);
-                    field.placeAnimal(rabbit, location);
+                    Zebra zebra = new Zebra(true, location);
+                    field.placeOrganism(zebra, location);
+                    System.out.println("R");
                 }
-                // else leave the location empty.
             }
         }
     }
 
     /**
-     * Report on the number of each type of animal in the field.
+     * Report on the number of each type of organism in the field.
      */
     public void reportStats()
     {

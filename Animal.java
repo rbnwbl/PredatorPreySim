@@ -1,3 +1,4 @@
+import java.util.Random;
 
 /**
  * Common elements of foxes and rabbits.
@@ -11,15 +12,20 @@ public abstract class Animal implements Organism
     private boolean alive;
     // The animal's position.
     private Location location;
+    private int stamina;
+    // Randomiser to introduce variation into the population.
+    private static final Random rand = Randomizer.getRandom();
 
     /**
      * Constructor for objects of class Animal.
      * @param location The animal's location.
      */
-    public Animal(Location location)
+    public Animal(Location location,int stamina)
     {
         this.alive = true;
         this.location = location;
+        // Randomise the stamina so population stamina varies.
+        this.stamina = (int) (stamina *  rand.nextDouble(0.6, 1.3));
     }
     
     /**

@@ -4,12 +4,12 @@ import java.util.Random;
 
 /**
  * A simple model of a fox.
- * Foxes age, move, eat rabbits, and die.
+ * Foxes age, move, eat zebras, and die.
  * 
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
-public class Fox extends Animal
+public class Hyena extends Animal
 {
     // Characteristics shared by all foxes (class variables).
     // The age at which a fox can start to breed.
@@ -20,17 +20,19 @@ public class Fox extends Animal
     private static final double BREEDING_PROBABILITY = 0.08;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
-    // The food value of a single rabbit. In effect, this is the
+    // The food value of a single zebra. In effect, this is the
     // number of steps a fox can go before it has to eat again.
     private static final int RABBIT_FOOD_VALUE = 9;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
+
+    private static final int BASE_STAMINA = 10;
     
     // Individual characteristics (instance fields).
 
     // The fox's age.
     private int age;
-    // The fox's food level, which is increased by eating rabbits.
+    // The fox's food level, which is increased by eating zebras.
     private int foodLevel;
 
     /**
@@ -40,9 +42,9 @@ public class Fox extends Animal
      * @param randomAge If true, the fox will have random age and hunger level.
      * @param location The location within the field.
      */
-    public Fox(boolean randomAge, Location location)
+    public Hyena(boolean randomAge, Location location)
     {
-        super(location);
+        super(location, BASE_STAMINA);
         if(randomAge) {
             age = rand.nextInt(MAX_AGE);
         }
@@ -54,7 +56,7 @@ public class Fox extends Animal
     
     /**
      * This is what the fox does most of the time: it hunts for
-     * rabbits. In the process, it might breed, die of hunger,
+     * zebras. In the process, it might breed, die of hunger,
      * or die of old age.
      * @param currentField The field currently occupied.
      * @param nextFieldState The updated field.
@@ -78,7 +80,7 @@ public class Fox extends Animal
             // See if it was possible to move.
             if(nextLocation != null) {
                 setLocation(nextLocation);
-                nextFieldState.placeAnimal(this, nextLocation);
+                nextFieldState.placeOrganism(this, nextLocation);
             }
             else {
                 // Overcrowding.
@@ -122,8 +124,8 @@ public class Fox extends Animal
     }
     
     /**
-     * Look for rabbits adjacent to the current location.
-     * Only the first live rabbit is eaten.
+     * Look for zebras adjacent to the current location.
+     * Only the first live zebra is eaten.
      * @param field The field currently occupied.
      * @return Where food was found, or null if it wasn't.
      */
@@ -134,10 +136,10 @@ public class Fox extends Animal
         Location foodLocation = null;
         while(foodLocation == null && it.hasNext()) {
             Location loc = it.next();
-            Animal animal = field.getAnimalAt(loc);
-            if(animal instanceof Rabbit rabbit) {
-                if(rabbit.isAlive()) {
-                    rabbit.setDead();
+            Organism organism = field.getOrganismAt(loc);
+            if(organism instanceof Zebra zebra) {
+                if(zebra.isAlive()) {
+                    zebra.setDead();
                     foodLevel = RABBIT_FOOD_VALUE;
                     foodLocation = loc;
                 }
@@ -159,8 +161,8 @@ public class Fox extends Animal
         if(births > 0) {
             for (int b = 0; b < births && ! freeLocations.isEmpty(); b++) {
                 Location loc = freeLocations.remove(0);
-                Fox young = new Fox(false, loc);
-                nextFieldState.placeAnimal(young, loc);
+                Hyena young = new Hyena(false, loc);
+                nextFieldState.placeOrganism(young, loc);
             }
         }
     }
