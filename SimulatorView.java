@@ -44,8 +44,9 @@ public class SimulatorView extends JFrame
         setColor(Zebra.class, Color.blue);
         setColor(Hyena.class, Color.red);
         setColor(Grass.class,Color.green);
+        setColor(Fruit.class, Color.magenta);
 
-        setTitle("Hyena and Zebra Simulation");
+        setTitle("Savannah Simulation");
         stepLabel = new JLabel(STEP_PREFIX, JLabel.CENTER);
         population = new JLabel(POPULATION_PREFIX, JLabel.CENTER);
         

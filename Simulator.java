@@ -123,25 +123,27 @@ public class Simulator
         field.clear();
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
+                // The sex of the organism being created.
+                char sex = (rand.nextDouble() < 0.5) ? 'M':'F';
                 if(rand.nextDouble() <= HYENA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Hyena hyena = new Hyena(true, location);
+                    Hyena hyena = new Hyena(sex, location,true);
                     field.placeOrganism(hyena, location);
-                    System.out.println("H");
+                }
+                else if (rand.nextDouble() <= FRUIT_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Fruit fruit = new Fruit(location,sex);
+                    field.placeOrganism(fruit, location);
                 }
                 else if (rand.nextDouble() <= GRASS_CREATION_PROBABILITY) {
-                    char sex = (rand.nextDouble() < 0.5) ? 'M' : 'F';
                     Location location = new Location(row,col);
                     Grass grass = new Grass(location,sex);
                     field.placeOrganism(grass,location);
-                    System.out.println("G");
-
                 }
                 else if(rand.nextDouble() <= ZEBRA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Zebra zebra = new Zebra(true, location);
+                    Zebra zebra = new Zebra(sex, location, true);
                     field.placeOrganism(zebra, location);
-                    System.out.println("R");
                 }
             }
         }

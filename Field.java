@@ -118,7 +118,7 @@ public class Field
      */
     public void fieldStats()
     {
-        int numHyenas = 0, numZebras=0,  numGrass = 0;
+        int numHyenas = 0, numZebras=0,  numGrass = 0, numFruit = 0;
         for(Organism organism : field.values()) {
             if(organism instanceof Hyena hyena) {
                 if(hyena.isAlive()) {
@@ -135,10 +135,16 @@ public class Field
                     numGrass++;
                 }
             }
+            else if (organism instanceof Fruit fruit) {
+                if (fruit.isAlive()) {
+                    numFruit++;
+                }
+            }
         }
         System.out.println("Zebras: " + numZebras +
                            " Foxes: " + numHyenas +
-                           " Grass: " + numGrass);
+                           " Grass: " + numGrass +
+                           " Fruit: " + numFruit);
     }
 
     /**
@@ -157,8 +163,10 @@ public class Field
     {
         boolean zebraFound = false;
         boolean hyenaFound = false;
+        boolean grassFound = false;
+        boolean fruitFound = false;
         Iterator<Organism> it = organisms.iterator();
-        while(it.hasNext() && ! (zebraFound && hyenaFound)) {
+        while(it.hasNext() && ! ((zebraFound && hyenaFound) && (fruitFound || grassFound))) {
             Organism organism = it.next();
             if(organism instanceof Zebra zebra) {
                 if(zebra.isAlive()) {
@@ -170,12 +178,22 @@ public class Field
                     hyenaFound = true;
                 }
             }
+            else if (organism instanceof Grass grass) {
+                if (grass.isAlive()) {
+                    grassFound = true;
+                }
+            }
+            else if (organism instanceof Fruit fruit) {
+                if (fruit.isAlive()) {
+                    fruitFound = true;
+                }
+            }
         }
         return zebraFound && hyenaFound;
     }
     
     /**
-     * Get the list of rganisms.
+     * Get the list of organisms.
      */
     public List<Organism> getOrganisms()
     {
