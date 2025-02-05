@@ -114,25 +114,78 @@ public class Field
     }
 
     /**
+     * Return a shuffled list of locations adjacent to the given one.
+     * The list will not include the location itself.
+     * All locations will lie within the grid.
+     * @param location The location from which to generate adjacencies.
+     * @return A list of locations adjacent to that given.
+     */
+    public List<Location> getLocationsInRange(Location location, int range)
+    {
+        // The list of locations to be returned.
+        List<Location> locations = new ArrayList<>();
+        if(location != null) {
+            int row = location.row();
+            int col = location.col();
+            for(int roffset = -range; roffset <= range; roffset++) {
+                int nextRow = row + roffset;
+                if(nextRow >= 0 && nextRow < depth) {
+                    for(int coffset = -range; coffset <= range; coffset++) {
+                        int nextCol = col + coffset;
+                        // Exclude invalid locations and the original location.
+                        if(nextCol >= 0 && nextCol < width && (roffset != 0 || coffset != 0)) {
+                            locations.add(new Location(nextRow, nextCol));
+                        }
+                    }
+                }
+            }
+            
+            // Shuffle the list. Several other methods rely on the list
+            // being in a random order.
+            Collections.shuffle(locations, rand);
+        }
+        return locations;
+    }
+
+    /**
      * Print out the number of foxes and rabbits in the field.
      */
     public void fieldStats()
     {
-        int numFoxes = 0, numRabbits = 0;
+        int numLion = 0, numHyena = 0, numCheetah = 0, numZebra = 0, numElephant = 0;
         for(Animal anAnimal : field.values()) {
-            if(anAnimal instanceof Fox fox) {
-                if(fox.isAlive()) {
-                    numFoxes++;
+            if(anAnimal instanceof Lion lion) {
+                if(lion.isAlive()) {
+                    numLion++;
                 }
             }
-            else if(anAnimal instanceof Rabbit rabbit) {
-                if(rabbit.isAlive()) {
-                    numRabbits++;
+            else if(anAnimal instanceof Hyena hyena) {
+                if(hyena.isAlive()) {
+                    numHyena++;
                 }
             }
+            else if(anAnimal instanceof Cheetah cheetah) {
+                if(cheetah.isAlive()) {
+                    numCheetah++;
+                }
+            }
+            else if(anAnimal instanceof Zebra zebra) {
+                if(zebra.isAlive()) {
+                    numZebra++;
+                }
+            }
+            else if(anAnimal instanceof Elephant elephant) {
+                if(elephant.isAlive()) {
+                    numElephant++;
+                }
+            }
+            
         }
-        System.out.println("Rabbits: " + numRabbits +
-                           " Foxes: " + numFoxes);
+        System.out.println("Lion: " + numLion +
+                           " Hyena: " + numHyena +
+                           " Cheetah: " + numCheetah +
+                           " Zebra: " + numZebra +
+                           " Elephant: " + numElephant);
     }
 
     /**
@@ -144,28 +197,43 @@ public class Field
     }
 
     /**
-     * Return whether there is at least one rabbit and one fox in the field.
-     * @return true if there is at least one rabbit and one fox in the field.
+     * Return whether there is at least one prey and one predator in the field.
+     * @return true if there is at least one prey and one predator in the field.
      */
     public boolean isViable()
     {
-        boolean rabbitFound = false;
-        boolean foxFound = false;
+        boolean preyFound = false;
+        boolean predatorFound = false;
         Iterator<Animal> it = animals.iterator();
-        while(it.hasNext() && ! (rabbitFound && foxFound)) {
+        while(it.hasNext() && ! (preyFound && predatorFound)) {
             Animal anAnimal = it.next();
-            if(anAnimal instanceof Rabbit rabbit) {
-                if(rabbit.isAlive()) {
-                    rabbitFound = true;
+            if(anAnimal instanceof Zebra zebra) {
+                if(zebra.isAlive()) {
+                    preyFound = true;
                 }
             }
-            else if(anAnimal instanceof Fox fox) {
-                if(fox.isAlive()) {
-                    foxFound = true;
+            if(anAnimal instanceof Elephant elephant) {
+                if(elephant.isAlive()) {
+                    preyFound = true;
+                }
+            }
+            else if(anAnimal instanceof Lion lion) {
+                if(lion.isAlive()) {
+                    predatorFound = true;
+                }
+            }
+            else if(anAnimal instanceof Hyena hyena) {
+                if(hyena.isAlive()) {
+                    predatorFound = true;
+                }
+            }
+            else if(anAnimal instanceof Cheetah cheetah) {
+                if(cheetah.isAlive()) {
+                    predatorFound = true;
                 }
             }
         }
-        return rabbitFound && foxFound;
+        return preyFound && predatorFound;
     }
     
     /**

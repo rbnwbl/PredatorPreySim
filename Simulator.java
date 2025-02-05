@@ -14,10 +14,16 @@ public class Simulator
     private static final int DEFAULT_WIDTH = 120;
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
-    // The probability that a fox will be created in any given grid position.
-    private static final double FOX_CREATION_PROBABILITY = 0.02;
-    // The probability that a rabbit will be created in any given position.
-    private static final double RABBIT_CREATION_PROBABILITY = 0.08;    
+    // The probability that a lion will be created in any given grid position.
+    private static final double LION_CREATION_PROBABILITY = 0.01;
+    // The probability that a hyena will be created in any given position.
+    private static final double HYENA_CREATION_PROBABILITY = 0.02;    
+    // The probability that a hyena will be created in any given position.
+    private static final double CHEETAH_CREATION_PROBABILITY = 0.01;   
+    // The probability that a hyena will be created in any given position.
+    private static final double ZEBRA_CREATION_PROBABILITY = 0.08;   
+    // The probability that a hyena will be created in any given position.
+    private static final double ELEPHANT_CREATION_PROBABILITY = 0.02;   
 
     // The current state of the field.
     private Field field;
@@ -111,7 +117,7 @@ public class Simulator
     }
     
     /**
-     * Randomly populate the field with foxes and rabbits.
+     * Randomly populate the field with lion, hyena, cheetah, zebra, elephant.
      */
     private void populate()
     {
@@ -119,15 +125,30 @@ public class Simulator
         field.clear();
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
-                if(rand.nextDouble() <= FOX_CREATION_PROBABILITY) {
+                if(rand.nextDouble() <= LION_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Fox fox = new Fox(true, location);
-                    field.placeAnimal(fox, location);
+                    Lion lion = new Lion(true, location);
+                    field.placeAnimal(lion, location);
                 }
-                else if(rand.nextDouble() <= RABBIT_CREATION_PROBABILITY) {
+                else if(rand.nextDouble() <= HYENA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Rabbit rabbit = new Rabbit(true, location);
-                    field.placeAnimal(rabbit, location);
+                    Hyena hyena = new Hyena(true, location);
+                    field.placeAnimal(hyena, location);
+                }
+                else if(rand.nextDouble() <= CHEETAH_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Cheetah cheetah = new Cheetah(true, location);
+                    field.placeAnimal(cheetah, location);
+                }
+                else if(rand.nextDouble() <= ZEBRA_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Zebra zebra = new Zebra(true, location);
+                    field.placeAnimal(zebra, location);
+                }
+                else if(rand.nextDouble() <= ELEPHANT_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Elephant elephant = new Elephant(true, location);
+                    field.placeAnimal(elephant, location);
                 }
                 // else leave the location empty.
             }

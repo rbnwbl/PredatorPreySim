@@ -1,4 +1,7 @@
 
+import java.util.Random;
+
+
 /**
  * Common elements of foxes and rabbits.
  *
@@ -11,6 +14,11 @@ public abstract class Animal implements Organism
     private boolean alive;
     // The animal's position.
     private Location location;
+    // The animal's sex.
+    private char sex;
+    // A shared random number generator to control breeding.
+    private static final Random rand = Randomizer.getRandom();
+    
 
     /**
      * Constructor for objects of class Animal.
@@ -20,6 +28,12 @@ public abstract class Animal implements Organism
     {
         this.alive = true;
         this.location = location;
+        if (rand.nextDouble() < 0.5) {
+            sex = 'm';
+        }
+        else {
+            sex = 'f';
+        }
     }
     
     /**
@@ -63,5 +77,9 @@ public abstract class Animal implements Organism
     protected void setLocation(Location location)
     {
         this.location = location;
+    }
+
+    public char getSex() {
+        return sex;
     }
 }

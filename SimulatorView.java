@@ -1,7 +1,7 @@
 import java.awt.*;
-import javax.swing.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.swing.*;
 
 /**
  * A graphical view of the simulation grid.
@@ -41,8 +41,11 @@ public class SimulatorView extends JFrame
     {
         stats = new FieldStats();
         colors = new LinkedHashMap<>();
-        setColor(Rabbit.class, Color.orange);
-        setColor(Fox.class, Color.blue);
+        setColor(Lion.class, Color.yellow);
+        setColor(Hyena.class, Color.blue);
+        setColor(Cheetah.class, Color.orange);
+        setColor(Zebra.class, Color.black);
+        setColor(Elephant.class, Color.darkGray);
 
         setTitle("Fox and Rabbit Simulation");
         stepLabel = new JLabel(STEP_PREFIX, JLabel.CENTER);
