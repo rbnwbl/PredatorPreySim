@@ -22,6 +22,10 @@ public class Zebra extends Animal
     private static final int MAX_LITTER_SIZE = 4;
     // The range hyena can mate in.
     private static final int MATE_RANGE = 4;
+    // The food value of a single grass.
+    private static final int GRASS_FOOD_VALUE = 3;
+    // The food value of a single grass.
+    private static final int FRUIT_FOOD_VALUE = 5;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
     //
@@ -31,6 +35,8 @@ public class Zebra extends Animal
     
     // The zebra's age.
     private int age;
+    // The zebra's food level, which is increased by eating grass & fruits.
+    private int foodLevel;
 
     /**
      * Create a new zebra. A zebra may be created with age
@@ -46,6 +52,7 @@ public class Zebra extends Animal
         if(randomAge) {
             age = rand.nextInt(MAX_AGE);
         }
+        foodLevel = rand.nextInt(GRASS_FOOD_VALUE);
     }
     
     /**
@@ -57,15 +64,21 @@ public class Zebra extends Animal
     public void act(Field currentField, Field nextFieldState)
     {
         incrementAge();
+        incrementHunger();
         if(isAlive()) {
             List<Location> freeLocations = 
                 nextFieldState.getFreeAdjacentLocations(getLocation());
             if(!freeLocations.isEmpty()) {
                 giveBirth(currentField, nextFieldState, freeLocations);
             }
+            // Move towards a source of food if found.
+            Location nextLocation = findFood(currentField);
+            if(nextLocation == null && ! freeLocations.isEmpty()) {
+                // No food found - try to move to a free location.
+                nextLocation = freeLocations.remove(0);
+            }
             // Try to move into a free location.
-            if(! freeLocations.isEmpty()) {
-                Location nextLocation = freeLocations.get(0);
+            if(nextLocation != null) {
                 setLocation(nextLocation);
                 nextFieldState.placeOrganism(this, nextLocation);
             }
@@ -96,7 +109,50 @@ public class Zebra extends Animal
             setDead();
         }
     }
+
+    /**
+     * Make this zebra more hungry. This could result in the zebra's death.
+     */
+    private void incrementHunger()
+    {
+        foodLevel--;
+        if(foodLevel <= 0) {
+            setDead();
+        }
+    }
     
+    /**
+     * Look for zebras adjacent to the current location.
+     * Only the first live zebra is eaten.
+     * @param field The field currently occupied.
+     * @return Where food was found, or null if it wasn't.
+     */
+    private Location findFood(Field field)
+    {
+        List<Location> adjacent = field.getAdjacentLocations(getLocation());
+        Iterator<Location> it = adjacent.iterator();
+        Location foodLocation = null;
+        while(foodLocation == null && it.hasNext()) {
+            Location loc = it.next();
+            Organism organism = field.getOrganismAt(loc);
+            if(organism instanceof Grass grass) {
+                if(grass.isAlive()) {
+                    grass.setDead();
+                    foodLevel = GRASS_FOOD_VALUE;
+                    foodLocation = loc;
+                }
+            }
+            if(organism instanceof Fruit fruit) {
+                if(fruit.isAlive()) {
+                    fruit.setDead();
+                    foodLevel = FRUIT_FOOD_VALUE;
+                    foodLocation = loc;
+                }
+            }
+        }
+        return foodLocation;
+    }
+
     /**
      * Check whether or not this zebra is to give birth at this step.
      * New births will be made into free adjacent locations.
