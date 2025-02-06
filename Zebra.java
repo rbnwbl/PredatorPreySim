@@ -1,3 +1,4 @@
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -19,6 +20,8 @@ public class Zebra extends Animal
     private static final double BREEDING_PROBABILITY = 0.12;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 4;
+    // The range hyena can mate in.
+    private static final int MATE_RANGE = 4;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
     //
@@ -58,7 +61,7 @@ public class Zebra extends Animal
             List<Location> freeLocations = 
                 nextFieldState.getFreeAdjacentLocations(getLocation());
             if(!freeLocations.isEmpty()) {
-                giveBirth(nextFieldState, freeLocations);
+                giveBirth(currentField, nextFieldState, freeLocations);
             }
             // Try to move into a free location.
             if(! freeLocations.isEmpty()) {
@@ -75,7 +78,7 @@ public class Zebra extends Animal
 
     @Override
     public String toString() {
-        return "Rabbit{" +
+        return "Zebra{" +
                 "age=" + age +
                 ", alive=" + isAlive() +
                 ", location=" + getLocation() +
@@ -99,12 +102,12 @@ public class Zebra extends Animal
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */
-    private void giveBirth(Field nextFieldState, List<Location> freeLocations)
+    private void giveBirth(Field currentField, Field nextFieldState, List<Location> freeLocations)
     {
         // New zebras are born into adjacent locations.
         // Get a list of adjacent free locations.
         int births = breed();
-        if(births > 0) {
+        if(births > 0 && canMate(currentField)) {
             for (int b = 0; b < births && !freeLocations.isEmpty(); b++) {
                 Location loc = freeLocations.remove(0);
                 Zebra young = new Zebra(false, loc);
@@ -137,5 +140,25 @@ public class Zebra extends Animal
     private boolean canBreed()
     {
         return age >= BREEDING_AGE;
+    }
+
+    /**
+     * A zebra can mate if there is a hyena of opposite sex within MATE_RANGE
+     */
+    private boolean canMate(Field field)
+    {
+        List<Location> adjacent = field.getLocationsInRange(getLocation(),MATE_RANGE);
+        Iterator<Location> it = adjacent.iterator();
+        Location mateLocation = null;
+        while(mateLocation == null && it.hasNext()) {
+            Location loc = it.next();
+            Organism organism = field.getOrganismAt(loc);
+            if(organism instanceof Zebra zebra) {
+                if(zebra.getSex() != getSex()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

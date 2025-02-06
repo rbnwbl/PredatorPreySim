@@ -1,28 +1,30 @@
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 /**
- * A simple model of a fox.
- * Foxes age, move, eat zebras, and die.
+ * A simple model of a hyena.
+ * hyenas age, move, eat zebras, and die.
  * 
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
 public class Hyena extends Animal
 {
-    // Characteristics shared by all foxes (class variables).
-    // The age at which a fox can start to breed.
+    // Characteristics shared by all hyenas (class variables).
+    // The age at which a hyena can start to breed.
     private static final int BREEDING_AGE = 15;
-    // The age to which a fox can live.
+    // The age to which a hyena can live.
     private static final int MAX_AGE = 150;
-    // The likelihood of a fox breeding.
+    // The likelihood of a hyena breeding.
     private static final double BREEDING_PROBABILITY = 0.08;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
+    // The range hyena can mate in.
+    private static final int MATE_RANGE = 3;
     // The food value of a single zebra. In effect, this is the
-    // number of steps a fox can go before it has to eat again.
-    private static final int RABBIT_FOOD_VALUE = 9;
+    // number of steps a hyena can go before it has to eat again.
+    private static final int ZEBRA_FOOD_VALUE = 9;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
 
@@ -30,16 +32,16 @@ public class Hyena extends Animal
     
     // Individual characteristics (instance fields).
 
-    // The fox's age.
+    // The hyena's age.
     private int age;
-    // The fox's food level, which is increased by eating zebras.
+    // The hyena's food level, which is increased by eating zebras.
     private int foodLevel;
 
     /**
-     * Create a fox. A fox can be created as a new born (age zero
+     * Create a hyena. A hyena can be created as a new born (age zero
      * and not hungry) or with a random age and food level.
      * 
-     * @param randomAge If true, the fox will have random age and hunger level.
+     * @param randomAge If true, the hyena will have random age and hunger level.
      * @param location The location within the field.
      */
     public Hyena(boolean randomAge, Location location)
@@ -51,11 +53,11 @@ public class Hyena extends Animal
         else {
             age = 0;
         }
-        foodLevel = rand.nextInt(RABBIT_FOOD_VALUE);
+        foodLevel = rand.nextInt(ZEBRA_FOOD_VALUE);
     }
     
     /**
-     * This is what the fox does most of the time: it hunts for
+     * This is what the hyena does most of the time: it hunts for
      * zebras. In the process, it might breed, die of hunger,
      * or die of old age.
      * @param currentField The field currently occupied.
@@ -69,7 +71,7 @@ public class Hyena extends Animal
             List<Location> freeLocations =
                     nextFieldState.getFreeAdjacentLocations(getLocation());
             if(! freeLocations.isEmpty()) {
-                giveBirth(nextFieldState, freeLocations);
+                giveBirth(currentField, nextFieldState, freeLocations);
             }
             // Move towards a source of food if found.
             Location nextLocation = findFood(currentField);
@@ -93,7 +95,7 @@ public class Hyena extends Animal
 
     @Override
     public String toString() {
-        return "Fox{" +
+        return "hyena{" +
                 "age=" + age +
                 ", alive=" + isAlive() +
                 ", location=" + getLocation() +
@@ -102,7 +104,7 @@ public class Hyena extends Animal
     }
 
     /**
-     * Increase the age. This could result in the fox's death.
+     * Increase the age. This could result in the hyena's death.
      */
     private void incrementAge()
     {
@@ -113,7 +115,7 @@ public class Hyena extends Animal
     }
     
     /**
-     * Make this fox more hungry. This could result in the fox's death.
+     * Make this hyena more hungry. This could result in the hyena's death.
      */
     private void incrementHunger()
     {
@@ -140,7 +142,7 @@ public class Hyena extends Animal
             if(organism instanceof Zebra zebra) {
                 if(zebra.isAlive()) {
                     zebra.setDead();
-                    foodLevel = RABBIT_FOOD_VALUE;
+                    foodLevel = ZEBRA_FOOD_VALUE;
                     foodLocation = loc;
                 }
             }
@@ -149,16 +151,16 @@ public class Hyena extends Animal
     }
     
     /**
-     * Check whether this fox is to give birth at this step.
+     * Check whether this hyena is to give birth at this step.
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */
-    private void giveBirth(Field nextFieldState, List<Location> freeLocations)
+    private void giveBirth(Field currentField, Field nextFieldState, List<Location> freeLocations)
     {
-        // New foxes are born into adjacent locations.
+        // New hyenaes are born into adjacent locations.
         // Get a list of adjacent free locations.
         int births = breed();
-        if(births > 0) {
+        if(births > 0 && canMate(currentField)) {
             for (int b = 0; b < births && ! freeLocations.isEmpty(); b++) {
                 Location loc = freeLocations.remove(0);
                 Hyena young = new Hyena(false, loc);
@@ -185,10 +187,30 @@ public class Hyena extends Animal
     }
 
     /**
-     * A fox can breed if it has reached the breeding age.
+     * A hyena can breed if it has reached the breeding age.
      */
     private boolean canBreed()
     {
         return age >= BREEDING_AGE;
+    }
+
+    /**
+     * A hyena can mate if there is a hyena of opposite sex within MATE_RANGE
+     */
+    private boolean canMate(Field field)
+    {
+        List<Location> adjacent = field.getLocationsInRange(getLocation(),MATE_RANGE);
+        Iterator<Location> it = adjacent.iterator();
+        Location mateLocation = null;
+        while(mateLocation == null && it.hasNext()) {
+            Location loc = it.next();
+            Organism organism = field.getOrganismAt(loc);
+            if(organism instanceof Hyena hyena) {
+                if(hyena.getSex() != getSex()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

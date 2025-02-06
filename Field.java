@@ -113,8 +113,35 @@ public class Field
         return locations;
     }
 
+    public List<Location> getLocationsInRange(Location location, int range)
+    {
+        // The list of locations to be returned.
+        List<Location> locations = new ArrayList<>();
+        if(location != null) {
+            int row = location.row();
+            int col = location.col();
+            for(int roffset = -range; roffset <= range; roffset++) {
+                int nextRow = row + roffset;
+                if(nextRow >= 0 && nextRow < depth) {
+                    for(int coffset = -range; coffset <= range; coffset++) {
+                        int nextCol = col + coffset;
+                        // Exclude invalid locations and the original location.
+                        if(nextCol >= 0 && nextCol < width && (roffset != 0 || coffset != 0)) {
+                            locations.add(new Location(nextRow, nextCol));
+                        }
+                    }
+                }
+            }
+            
+            // Shuffle the list. Several other methods rely on the list
+            // being in a random order.
+            Collections.shuffle(locations, rand);
+        }
+        return locations;
+    }
+
     /**
-     * Print out the number of foxes and zebras in the field.
+     * Print out the number of hyenas and zebras in the field.
      */
     public void fieldStats()
     {
@@ -142,7 +169,7 @@ public class Field
             }
         }
         System.out.println("Zebras: " + numZebras +
-                           " Foxes: " + numHyenas +
+                           " Hyenas: " + numHyenas +
                            " Grass: " + numGrass +
                            " Fruit: " + numFruit);
     }
@@ -161,35 +188,34 @@ public class Field
      */
     public boolean isViable()
     {
-        boolean zebraFound = false;
-        boolean hyenaFound = false;
-        boolean grassFound = false;
-        boolean fruitFound = false;
+        boolean preyFound = false;
+        boolean predatorFound = false;
+        boolean plantFound = false;
         Iterator<Organism> it = organisms.iterator();
-        while(it.hasNext() && ! ((zebraFound && hyenaFound) && (fruitFound || grassFound))) {
+        while(it.hasNext() && ! ((preyFound && predatorFound && plantFound))) {
             Organism organism = it.next();
             if(organism instanceof Zebra zebra) {
                 if(zebra.isAlive()) {
-                    zebraFound = true;
+                    preyFound = true;
                 }
             }
             else if(organism instanceof Hyena hyena) {
                 if(hyena.isAlive()) {
-                    hyenaFound = true;
+                    predatorFound = true;
                 }
             }
             else if (organism instanceof Grass grass) {
                 if (grass.isAlive()) {
-                    grassFound = true;
+                    plantFound = true;
                 }
             }
             else if (organism instanceof Fruit fruit) {
                 if (fruit.isAlive()) {
-                    fruitFound = true;
+                    plantFound = true;
                 }
             }
         }
-        return zebraFound && hyenaFound;
+        return preyFound && predatorFound && plantFound;
     }
     
     /**

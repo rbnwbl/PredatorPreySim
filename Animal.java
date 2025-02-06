@@ -12,7 +12,10 @@ public abstract class Animal implements Organism
     private boolean alive;
     // The animal's position.
     private Location location;
+    // The animal's stamina.
     private int stamina;
+    // The animal's sex. 'M' for 'Male', 'F' for 'Female'.
+    private char sex;
     // Randomiser to introduce variation into the population.
     private static final Random rand = Randomizer.getRandom();
 
@@ -26,6 +29,14 @@ public abstract class Animal implements Organism
         this.location = location;
         // Randomise the stamina so population stamina varies.
         this.stamina = (int) (stamina *  rand.nextDouble(0.6, 1.3));
+        // Randomise sex of the animal.
+        if (rand.nextDouble() < 0.5) {
+            sex = 'M';
+        }
+        else {
+            sex = 'F';
+        }
+
     }
     
     /**
@@ -69,5 +80,9 @@ public abstract class Animal implements Organism
     protected void setLocation(Location location)
     {
         this.location = location;
+    }
+
+    public char getSex() {
+        return sex;
     }
 }
