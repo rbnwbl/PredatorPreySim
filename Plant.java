@@ -17,11 +17,10 @@ public abstract class Plant implements Organism {
      * Constructor for objects of the Plant class.
      * @param location The plant's location.
      */
-    public Plant(Location location, char sex) {
+    public Plant(Location location) {
         this.alive = true;
         this.location = location;
         this.age = 0;
-        this.sex = sex;
     }
 
     /**

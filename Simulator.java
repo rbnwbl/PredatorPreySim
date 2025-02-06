@@ -28,6 +28,8 @@ public class Simulator
     private Field field;
     // The current step of the simulation.
     private int step;
+    // The timer to keep track of time of the simulation
+    private Timer timer;
     // A graphical view of the simulation.
     private final SimulatorView view;
 
@@ -89,6 +91,7 @@ public class Simulator
     public void simulateOneStep()
     {
         step++;
+        timer.increment();
         // Use a separate Field to store the starting state of
         // the next step.
         Field nextFieldState = new Field(field.getDepth(), field.getWidth());
@@ -113,6 +116,7 @@ public class Simulator
         step = 0;
         populate();
         view.showStatus(step, field);
+        timer = new Timer();
     }
     /**
      * Randomly populate the field with hyenaes and zebras.
@@ -124,26 +128,26 @@ public class Simulator
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
                 // The sex of the organism being created.
-                char sex = (rand.nextDouble() < 0.5) ? 'M':'F';
+                // char sex = (rand.nextDouble() < 0.5) ? 'M':'F';
                 if(rand.nextDouble() <= HYENA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Hyena hyena = new Hyena(sex, location,true);
+                    Hyena hyena = new Hyena(true, location);
                     field.placeOrganism(hyena, location);
-                }
-                else if (rand.nextDouble() <= FRUIT_CREATION_PROBABILITY) {
-                    Location location = new Location(row, col);
-                    Fruit fruit = new Fruit(location,sex);
-                    field.placeOrganism(fruit, location);
-                }
-                else if (rand.nextDouble() <= GRASS_CREATION_PROBABILITY) {
-                    Location location = new Location(row,col);
-                    Grass grass = new Grass(location,sex);
-                    field.placeOrganism(grass,location);
                 }
                 else if(rand.nextDouble() <= ZEBRA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Zebra zebra = new Zebra(sex, location, true);
+                    Zebra zebra = new Zebra(true, location);
                     field.placeOrganism(zebra, location);
+                }
+                else if (rand.nextDouble() <= FRUIT_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Fruit fruit = new Fruit(location);
+                    field.placeOrganism(fruit, location);
+                }
+                else if (rand.nextDouble() <= GRASS_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Grass grass = new Grass(location);
+                    field.placeOrganism(grass,location);
                 }
             }
         }

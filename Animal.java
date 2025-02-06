@@ -46,6 +46,7 @@ public abstract class Animal implements Organism
      */
     abstract public void act(Field currentField, Field nextFieldState);
     
+
     /**
      * Check whether the animal is alive or not.
      * @return true if the animal is still alive.
