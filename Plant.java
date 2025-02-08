@@ -1,3 +1,4 @@
+import java.util.Random;
 /**
  * Abstract class for plant subclasses.
  * 
@@ -13,14 +14,20 @@ public abstract class Plant implements Organism {
     protected Location location;
     // The plant's age.
     protected int age;
+    // The plant's nutrition value.
+    private int nutrition;
+    
+    private static final Random rand = Randomizer.getRandom();
     /**
      * Constructor for objects of the Plant class.
      * @param location The plant's location.
      */
-    public Plant(Location location) {
+    public Plant(Location location,int nutrition) {
         this.alive = true;
         this.location = location;
         this.age = 0;
+        this.nutrition = nutrition;
+        this.sex = (rand.nextDouble() < 0.5)?'M':'F';
     }
 
     /**
@@ -41,10 +48,8 @@ public abstract class Plant implements Organism {
     {
         return location;
     }
-    
-    public void incrementAge()
-    {
-        age++;
-    }
 
+    public char getSex() {
+        return sex;
+    }
 }

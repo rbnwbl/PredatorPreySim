@@ -38,14 +38,6 @@ public abstract class Animal implements Organism
         }
 
     }
-    
-    /**
-     * Act.
-     * @param currentField The current state of the field.
-     * @param nextFieldState The new state being built.
-     */
-    abstract public void act(Field currentField, Field nextFieldState);
-    
 
     /**
      * Check whether the animal is alive or not.

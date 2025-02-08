@@ -3,5 +3,7 @@ public static void main(String[] args) {
     simulator1.reportStats();
     simulator1.simulateOneStep();
     simulator1.reportStats();
+    simulator1.runLongSimulation();
+    simulator1.reportStats();
     
 }

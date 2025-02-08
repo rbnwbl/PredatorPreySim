@@ -15,13 +15,13 @@ public class Simulator
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
     // The probability that a hyena will be created in any given grid position.
-    private static final double HYENA_CREATION_PROBABILITY = 0.02;
+    private static final double HYENA_CREATION_PROBABILITY = 0.04;
     // The probability that a zebra will be created in any given position.
-    private static final double ZEBRA_CREATION_PROBABILITY = 0.08;    
-    // The probability that a grass plant will be created in any given position.
-    private static final double GRASS_CREATION_PROBABILITY = 0.04;
+    private static final double ZEBRA_CREATION_PROBABILITY = 0.14;
     // The probability that a fruit plant will be created in any given position.
-    private static final double FRUIT_CREATION_PROBABILITY = 0.03;
+    private static final double FRUIT_CREATION_PROBABILITY = 0.20;
+    // The probability that a grass plant will be created in any given position.
+    private static final double GRASS_CREATION_PROBABILITY = 0.36;
     
 
     // The current state of the field.
@@ -127,26 +127,26 @@ public class Simulator
         field.clear();
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
+                double roll = rand.nextDouble();
                 // The sex of the organism being created.
-                // char sex = (rand.nextDouble() < 0.5) ? 'M':'F';
-                if(rand.nextDouble() <= HYENA_CREATION_PROBABILITY) {
+                if(roll <= HYENA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
                     Hyena hyena = new Hyena(true, location);
                     field.placeOrganism(hyena, location);
                 }
-                else if(rand.nextDouble() <= ZEBRA_CREATION_PROBABILITY) {
+                else if(roll <= ZEBRA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
                     Zebra zebra = new Zebra(true, location);
                     field.placeOrganism(zebra, location);
                 }
-                else if (rand.nextDouble() <= FRUIT_CREATION_PROBABILITY) {
+                else if (roll <= FRUIT_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Fruit fruit = new Fruit(location);
+                    Fruit fruit = new Fruit(true,location);
                     field.placeOrganism(fruit, location);
                 }
-                else if (rand.nextDouble() <= GRASS_CREATION_PROBABILITY) {
+                else if (roll <= GRASS_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
-                    Grass grass = new Grass(location);
+                    Grass grass = new Grass(true,location);
                     field.placeOrganism(grass,location);
                 }
             }

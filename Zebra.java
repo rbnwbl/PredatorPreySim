@@ -17,11 +17,11 @@ public class Zebra extends Animal
     // The age to which a zebra can live.
     private static final int MAX_AGE = 40;
     // The likelihood of a zebra breeding.
-    private static final double BREEDING_PROBABILITY = 0.12;
+    private static final double BREEDING_PROBABILITY = 0.08;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 4;
     // The range hyena can mate in.
-    private static final int MATE_RANGE = 4;
+    private static final int MATE_RANGE = 3;
     // The food value of a single grass.
     private static final int GRASS_FOOD_VALUE = 3;
     // The food value of a single grass.
