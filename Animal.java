@@ -15,7 +15,7 @@ public abstract class Animal implements Organism
     // The animal's stamina.
     private int stamina;
     // The animal's sex. 'M' for 'Male', 'F' for 'Female'.
-    private char sex;
+    private final char sex;
     // Randomiser to introduce variation into the population.
     private static final Random rand = Randomizer.getRandom();
 
@@ -38,7 +38,7 @@ public abstract class Animal implements Organism
         }
 
     }
-
+    
     /**
      * Check whether the animal is alive or not.
      * @return true if the animal is still alive.
@@ -75,6 +75,10 @@ public abstract class Animal implements Organism
         this.location = location;
     }
 
+    /**
+     * Return the animal's sex.
+     * @return The animal's sex.
+     */
     public char getSex() {
         return sex;
     }

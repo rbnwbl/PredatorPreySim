@@ -57,6 +57,7 @@ public class Simulator
         
         field = new Field(depth, width);
         view = new SimulatorView(depth, width);
+        timer = new Timer();
 
         reset();
     }
@@ -98,7 +99,7 @@ public class Simulator
 
         List<Organism> organisms = field.getOrganisms();
         for (Organism anOrganism : organisms) {
-            anOrganism.act(field, nextFieldState);
+            anOrganism.act(field, nextFieldState, timer.getTime());
         }
         
         // Replace the old state with the new one.
@@ -116,7 +117,8 @@ public class Simulator
         step = 0;
         populate();
         view.showStatus(step, field);
-        timer = new Timer();
+        timer.reset();
+        
     }
     /**
      * Randomly populate the field with hyenaes and zebras.

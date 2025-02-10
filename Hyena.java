@@ -17,11 +17,19 @@ public class Hyena extends Animal
     // The age to which a hyena can live.
     private static final int MAX_AGE = 150;
     // The likelihood of a hyena breeding.
-    private static final double BREEDING_PROBABILITY = 0.06;
+    private static final double BREEDING_PROBABILITY = 0.08;
     // The maximum number of births.
     private static final int MAX_LITTER_SIZE = 2;
     // The range hyena can mate in.
     private static final int MATE_RANGE = 3;
+    // The start & end time of the period hyenas are active in a day.
+    private static final int ACTIVE_TIME_START = 22;
+    private static final int ACTIVE_TIME_END = 8;
+    // The range hyenas can move in when they are active.
+    private static final int ACTIVE_RANGE = 2;
+    // The start & end time of the period hyenas sleep in a day.
+    private static final int SLEEP_TIME_START = 12;
+    private static final int SLEEP_TIME_END = 15;
     // The food value of a single zebra. In effect, this is the
     // number of steps a hyena can go before it has to eat again.
     private static final int ZEBRA_FOOD_VALUE = 9;
@@ -62,19 +70,26 @@ public class Hyena extends Animal
      * or die of old age.
      * @param currentField The field currently occupied.
      * @param nextFieldState The updated field.
+     * @param time The current time of the simulation.
      */
-    public void act(Field currentField, Field nextFieldState)
+    public void act(Field currentField, Field nextFieldState, int time)
     {
         incrementAge();
         incrementHunger();
-        if(isAlive()) {
+        if(isAlive() && ! isAsleep(time) ) {
             List<Location> freeLocations =
                     nextFieldState.getFreeAdjacentLocations(getLocation());
             if(! freeLocations.isEmpty()) {
                 giveBirth(currentField, nextFieldState, freeLocations);
             }
+            Location nextLocation;
+            if (isActive(time)) {
+                nextLocation = findFood(currentField, ACTIVE_RANGE);
+            }
+            else {
+                nextLocation = findFood(currentField, 1);
+            }
             // Move towards a source of food if found.
-            Location nextLocation = findFood(currentField);
             if(nextLocation == null && ! freeLocations.isEmpty()) {
                 // No food found - try to move to a free location.
                 nextLocation = freeLocations.remove(0);
@@ -90,8 +105,6 @@ public class Hyena extends Animal
             }
         }
     }
-
-
 
     @Override
     public String toString() {
@@ -126,15 +139,46 @@ public class Hyena extends Animal
     }
     
     /**
+     * Check if it is the hyena's active time.
+     * @param time The time.
+     * @return Whether current time is in the active time range.
+     */
+    private boolean isActive(int time)
+    {
+        if (ACTIVE_TIME_START < ACTIVE_TIME_END) {
+            return (time > ACTIVE_TIME_START) && (time < ACTIVE_TIME_END);
+        }
+        else {
+            return (time > ACTIVE_TIME_START) || (time < ACTIVE_TIME_END);
+        }
+    }
+
+    /**
+     * Check if it is the hyena's sleep time.
+     * @param time The time.
+     * @return Whether current time is in the sleep time range.
+     */
+    private boolean isAsleep(int time)
+    {
+        if (SLEEP_TIME_START < SLEEP_TIME_END) {
+            return (time > SLEEP_TIME_START) && (time < SLEEP_TIME_END);
+        }
+        else {
+            return (time > SLEEP_TIME_START) || (time < SLEEP_TIME_END);
+        }
+    }
+
+
+    /**
      * Look for zebras adjacent to the current location.
      * Only the first live zebra is eaten.
      * @param field The field currently occupied.
      * @return Where food was found, or null if it wasn't.
      */
-    private Location findFood(Field field)
+    private Location findFood(Field field, int range)
     {
-        List<Location> adjacent = field.getAdjacentLocations(getLocation());
-        Iterator<Location> it = adjacent.iterator();
+        List<Location> locations = field.getLocationsInRange(getLocation(), 1);
+        Iterator<Location> it = locations.iterator();
         Location foodLocation = null;
         while(foodLocation == null && it.hasNext()) {
             Location loc = it.next();
@@ -213,4 +257,5 @@ public class Hyena extends Animal
         }
         return false;
     }
+    
 }

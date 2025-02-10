@@ -20,13 +20,31 @@ public class Timer
         hour = rand.nextInt(24);
     }
 
+    /**
+     * Reset timer.
+     */
+    public void reset()
+    {
+        hour = rand.nextInt(24);
+    }
     
+    /**
+     * Increment time by 1 hour.
+     */
     public void increment()
     {
         hour++;
         if (hour == 24) {
             hour = 0;
         }
+    }
+
+    /**
+     * Return the time.
+     * @return The time.
+     */
+    public int getTime() {
+        return hour;
     }
 
 }

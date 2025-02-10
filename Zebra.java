@@ -22,6 +22,16 @@ public class Zebra extends Animal
     private static final int MAX_LITTER_SIZE = 4;
     // The range hyena can mate in.
     private static final int MATE_RANGE = 3;
+    // The start & end time of the period hyenas are active in a day.
+    private static final int ACTIVE_TIME_START = 10;
+    private static final int ACTIVE_TIME_END = 20;
+    // The range hyenas can move in when they are active.
+    private static final int ACTIVE_RANGE = 2;
+    // The start & end time of the period hyenas sleep in a day.
+    private static final int SLEEP_TIME_START = 23;
+    private static final int SLEEP_TIME_END = 5;
+    // The food value of a single zebra. In effect, this is the
+    // number of steps a hyena can go before it has to eat again.
     // The food value of a single grass.
     private static final int GRASS_FOOD_VALUE = 3;
     // The food value of a single grass.
@@ -60,24 +70,31 @@ public class Zebra extends Animal
      * around. Sometimes it will breed or die of old age.
      * @param currentField The field occupied.
      * @param nextFieldState The updated field.
+     * @param time The current time of the simulation.
      */
-    public void act(Field currentField, Field nextFieldState)
+    public void act(Field currentField, Field nextFieldState, int time)
     {
         incrementAge();
         incrementHunger();
-        if(isAlive()) {
-            List<Location> freeLocations = 
-                nextFieldState.getFreeAdjacentLocations(getLocation());
-            if(!freeLocations.isEmpty()) {
+        if(isAlive() && ! isAsleep(time) ) {
+            List<Location> freeLocations =
+                    nextFieldState.getFreeAdjacentLocations(getLocation());
+            if(! freeLocations.isEmpty()) {
                 giveBirth(currentField, nextFieldState, freeLocations);
             }
+            Location nextLocation;
+            if (isActive(time)) {
+                nextLocation = findFood(currentField, ACTIVE_RANGE);
+            }
+            else {
+                nextLocation = findFood(currentField, 1);
+            }
             // Move towards a source of food if found.
-            Location nextLocation = findFood(currentField);
             if(nextLocation == null && ! freeLocations.isEmpty()) {
                 // No food found - try to move to a free location.
                 nextLocation = freeLocations.remove(0);
             }
-            // Try to move into a free location.
+            // See if it was possible to move.
             if(nextLocation != null) {
                 setLocation(nextLocation);
                 nextFieldState.placeOrganism(this, nextLocation);
@@ -122,15 +139,45 @@ public class Zebra extends Animal
     }
     
     /**
+     * Check if it is the zebra's active time.
+     * @param time The time.
+     * @return Whether current time is in the active time range.
+     */
+    private boolean isActive(int time)
+    {
+        if (ACTIVE_TIME_START < ACTIVE_TIME_END) {
+            return (time > ACTIVE_TIME_START) && (time < ACTIVE_TIME_END);
+        }
+        else {
+            return (time > ACTIVE_TIME_START) || (time < ACTIVE_TIME_END);
+        }
+    }
+
+    /**
+     * Check if it is the zebra's sleep time.
+     * @param time The time.
+     * @return Whether current time is in the sleep time range.
+     */
+    private boolean isAsleep(int time)
+    {
+        if (SLEEP_TIME_START < SLEEP_TIME_END) {
+            return (time > SLEEP_TIME_START) && (time < SLEEP_TIME_END);
+        }
+        else {
+            return (time > SLEEP_TIME_START) || (time < SLEEP_TIME_END);
+        }
+    }
+
+    /**
      * Look for zebras adjacent to the current location.
      * Only the first live zebra is eaten.
      * @param field The field currently occupied.
      * @return Where food was found, or null if it wasn't.
      */
-    private Location findFood(Field field)
+    private Location findFood(Field field, int range)
     {
-        List<Location> adjacent = field.getAdjacentLocations(getLocation());
-        Iterator<Location> it = adjacent.iterator();
+        List<Location> locations = field.getLocationsInRange(getLocation(), 1);
+        Iterator<Location> it = locations.iterator();
         Location foodLocation = null;
         while(foodLocation == null && it.hasNext()) {
             Location loc = it.next();

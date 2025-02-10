@@ -22,7 +22,7 @@ public class Fruit extends Plant
         }
         super(location,NUTRITION);
     }
-    public void act(Field currentField,Field nextFieldState)
+    public void act(Field currentField,Field nextFieldState, int time)
     {
         incrementAge();
         if (isAlive()) {

@@ -23,7 +23,8 @@ public class Grass extends Plant
         }
         super(location,NUTRITION);
     }
-    public void act(Field currentField,Field nextFieldState)
+
+    public void act(Field currentField,Field nextFieldState, int time)
     {
         incrementAge();
         if (isAlive()) {
@@ -34,6 +35,7 @@ public class Grass extends Plant
             }
         }
     }
+
     private void incrementAge()
     {
         age++;

@@ -88,29 +88,7 @@ public class Field
      */
     public List<Location> getAdjacentLocations(Location location)
     {
-        // The list of locations to be returned.
-        List<Location> locations = new ArrayList<>();
-        if(location != null) {
-            int row = location.row();
-            int col = location.col();
-            for(int roffset = -1; roffset <= 1; roffset++) {
-                int nextRow = row + roffset;
-                if(nextRow >= 0 && nextRow < depth) {
-                    for(int coffset = -1; coffset <= 1; coffset++) {
-                        int nextCol = col + coffset;
-                        // Exclude invalid locations and the original location.
-                        if(nextCol >= 0 && nextCol < width && (roffset != 0 || coffset != 0)) {
-                            locations.add(new Location(nextRow, nextCol));
-                        }
-                    }
-                }
-            }
-            
-            // Shuffle the list. Several other methods rely on the list
-            // being in a random order.
-            Collections.shuffle(locations, rand);
-        }
-        return locations;
+        return getLocationsInRange(location, 1);
     }
 
     public List<Location> getLocationsInRange(Location location, int range)
