@@ -119,13 +119,23 @@ public class Field
     }
 
     /**
-     * Print out the number of hyenas and zebras in the field.
+     * Print out the number of each organisms in the field.
      */
     public void fieldStats()
     {
-        int numHyenas = 0, numZebras=0,  numGrass = 0, numFruit = 0;
+        int numLions = 0, numCheetahs = 0, numHyenas = 0, numZebras = 0,  numElephants = 0, numGrass = 0, numFruit = 0;
         for(Organism organism : field.values()) {
-            if(organism instanceof Hyena hyena) {
+            if(organism instanceof Lion lion) {
+                if(lion.isAlive()) {
+                    numLions++;
+                }
+            }
+            else if(organism instanceof Cheetah cheetah) {
+                if(cheetah.isAlive()) {
+                    numCheetahs++;
+                }
+            }
+            else if(organism instanceof Hyena hyena) {
                 if(hyena.isAlive()) {
                     numHyenas++;
                 }
@@ -133,6 +143,11 @@ public class Field
             else if(organism instanceof Zebra zebra) {
                 if(zebra.isAlive()) {
                     numZebras++;
+                }
+            }
+            else if(organism instanceof Elephant elephant) {
+                if(elephant.isAlive()) {
+                    numElephants++;
                 }
             }
             else if(organism instanceof Grass grass) {
@@ -146,8 +161,11 @@ public class Field
                 }
             }
         }
-        System.out.println("Zebras: " + numZebras +
+        System.out.println("Lions: " + numLions +
+                           " Cheetahs: " + numCheetahs +
                            " Hyenas: " + numHyenas +
+                           " Zebras: " + numZebras +
+                           " Elephant: " + numElephants +
                            " Grass: " + numGrass +
                            " Fruit: " + numFruit);
     }
@@ -161,8 +179,8 @@ public class Field
     }
 
     /**
-     * Return whether there is at least one zebra and one fox in the field.
-     * @return true if there is at least one zebra and one fox in the field.
+     * Return whether there is at least one predator, one prey, and one plant in the field.
+     * @return true if there is at least oone predator, one prey, and one plant in the field.
      */
     public boolean isViable()
     {
@@ -172,14 +190,29 @@ public class Field
         Iterator<Organism> it = organisms.iterator();
         while(it.hasNext() && ! ((preyFound && predatorFound && plantFound))) {
             Organism organism = it.next();
-            if(organism instanceof Zebra zebra) {
-                if(zebra.isAlive()) {
-                    preyFound = true;
+            if(organism instanceof Lion lion) {
+                if(lion.isAlive()) {
+                    predatorFound = true;
+                }
+            }
+            else if(organism instanceof Cheetah cheetah) {
+                if(cheetah.isAlive()) {
+                    predatorFound = true;
                 }
             }
             else if(organism instanceof Hyena hyena) {
                 if(hyena.isAlive()) {
                     predatorFound = true;
+                }
+            }
+            else if(organism instanceof Zebra zebra) {
+                if(zebra.isAlive()) {
+                    preyFound = true;
+                }
+            }
+            else if(organism instanceof Elephant elephant) {
+                if(elephant.isAlive()) {
+                    preyFound = true;
                 }
             }
             else if (organism instanceof Grass grass) {

@@ -3,72 +3,72 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * A simple model of a hyena.
- * hyenas age, move, eat zebras, and die.
+ * A simple model of a elephant.
+ * Rabbits age, move, breed, and die.
  * 
  * @author David J. Barnes and Michael Kölling
  * @version 7.1
  */
-public class Hyena extends Animal
+public class Elephant extends Animal
 {
-    // Characteristics shared by all hyenas (class variables).
-    // The age at which a hyena can start to breed.
-    private static final int BREEDING_AGE = 15;
-    // The age to which a hyena can live.
-    private static final int MAX_AGE = 150;
-    // The likelihood of a hyena breeding.
+    // Characteristics shared by all elephants (class variables).
+    // The age at which a elephant can start to breed.
+    private static final int BREEDING_AGE = 5;
+    // The age to which a elephant can live.
+    private static final int MAX_AGE = 40;
+    // The likelihood of a elephant breeding.
     private static final double BREEDING_PROBABILITY = 0.08;
     // The maximum number of births.
-    private static final int MAX_LITTER_SIZE = 2;
+    private static final int MAX_LITTER_SIZE = 4;
     // The range hyena can mate in.
-    private static final int MATE_RANGE = 5;
+    private static final int MATE_RANGE = 3;
     // The start & end time of the period hyenas are active in a day.
     private static final int ACTIVE_TIME_START = 22;
-    private static final int ACTIVE_TIME_END = 8;
+    private static final int ACTIVE_TIME_END = 4;
     // The range hyenas can move in when they are active.
     private static final int ACTIVE_RANGE = 2;
     // The start & end time of the period hyenas sleep in a day.
-    private static final int SLEEP_TIME_START = 12;
-    private static final int SLEEP_TIME_END = 15;
-    // The food value of a single zebra. In effect, this is the
+    private static final int SLEEP_TIME_START = 10;
+    private static final int SLEEP_TIME_END = 14;
+    // The food value of a single elephant. In effect, this is the
     // number of steps a hyena can go before it has to eat again.
-    private static final int ZEBRA_FOOD_VALUE = 9;
+    // The food value of a single grass.
+    private static final int GRASS_FOOD_VALUE = 3;
+    // The food value of a single grass.
+    private static final int FRUIT_FOOD_VALUE = 5;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
-
-    private static final int BASE_STAMINA = 10;
+    //
+    private static final int BASE_STAMINA = 15;
     
     // Individual characteristics (instance fields).
-
-    // The hyena's age.
+    
+    // The elephant's age.
     private int age;
-    // The hyena's food level, which is increased by eating zebras.
+    // The elephant's food level, which is increased by eating grass & fruits.
     private int foodLevel;
 
     /**
-     * Create a hyena. A hyena can be created as a new born (age zero
-     * and not hungry) or with a random age and food level.
+     * Create a new elephant. A elephant may be created with age
+     * zero (a new born) or with a random age.
      * 
-     * @param randomAge If true, the hyena will have random age and hunger level.
+     * @param randomAge If true, the elephant will have a random age.
      * @param location The location within the field.
      */
-    public Hyena(boolean randomAge, Location location)
+    public Elephant(boolean randomAge, Location location)
     {
         super(location, BASE_STAMINA);
+        age = 0;
         if(randomAge) {
             age = rand.nextInt(MAX_AGE);
         }
-        else {
-            age = 0;
-        }
-        foodLevel = rand.nextInt(ZEBRA_FOOD_VALUE);
+        foodLevel = rand.nextInt(GRASS_FOOD_VALUE);
     }
     
     /**
-     * This is what the hyena does most of the time: it hunts for
-     * zebras. In the process, it might breed, die of hunger,
-     * or die of old age.
-     * @param currentField The field currently occupied.
+     * This is what the elephant does most of the time - it runs 
+     * around. Sometimes it will breed or die of old age.
+     * @param currentField The field occupied.
      * @param nextFieldState The updated field.
      * @param time The current time of the simulation.
      */
@@ -108,16 +108,16 @@ public class Hyena extends Animal
 
     @Override
     public String toString() {
-        return "Hyena{" +
+        return "Elephant{" +
                 "age=" + age +
                 ", alive=" + isAlive() +
                 ", location=" + getLocation() +
-                ", foodLevel=" + foodLevel +
                 '}';
     }
 
     /**
-     * Increase the age. This could result in the hyena's death.
+     * Increase the age.
+     * This could result in the elephant's death.
      */
     private void incrementAge()
     {
@@ -126,9 +126,9 @@ public class Hyena extends Animal
             setDead();
         }
     }
-    
+
     /**
-     * Make this hyena more hungry. This could result in the hyena's death.
+     * Make this elephant more hungry. This could result in the elephant's death.
      */
     private void incrementHunger()
     {
@@ -139,7 +139,7 @@ public class Hyena extends Animal
     }
     
     /**
-     * Check if it is the hyena's active time.
+     * Check if it is the elephant's active time.
      * @param time The time.
      * @return Whether current time is in the active time range.
      */
@@ -154,7 +154,7 @@ public class Hyena extends Animal
     }
 
     /**
-     * Check if it is the hyena's sleep time.
+     * Check if it is the elephant's sleep time.
      * @param time The time.
      * @return Whether current time is in the sleep time range.
      */
@@ -168,10 +168,9 @@ public class Hyena extends Animal
         }
     }
 
-
     /**
-     * Look for zebras adjacent to the current location.
-     * Only the first live zebra is eaten.
+     * Look for elephants adjacent to the current location.
+     * Only the first live elephant is eaten.
      * @param field The field currently occupied.
      * @return Where food was found, or null if it wasn't.
      */
@@ -183,31 +182,38 @@ public class Hyena extends Animal
         while(foodLocation == null && it.hasNext()) {
             Location loc = it.next();
             Organism organism = field.getOrganismAt(loc);
-            if(organism instanceof Zebra zebra) {
-                if(zebra.isAlive()) {
-                    zebra.setDead();
-                    foodLevel = ZEBRA_FOOD_VALUE;
+            if(organism instanceof Grass grass) {
+                if(grass.isAlive()) {
+                    grass.setDead();
+                    foodLevel = GRASS_FOOD_VALUE;
+                    foodLocation = loc;
+                }
+            }
+            if(organism instanceof Fruit fruit) {
+                if(fruit.isAlive()) {
+                    fruit.setDead();
+                    foodLevel = FRUIT_FOOD_VALUE;
                     foodLocation = loc;
                 }
             }
         }
         return foodLocation;
     }
-    
+
     /**
-     * Check whether this hyena is to give birth at this step.
+     * Check whether or not this elephant is to give birth at this step.
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */
     private void giveBirth(Field currentField, Field nextFieldState, List<Location> freeLocations)
     {
-        // New hyenaes are born into adjacent locations.
+        // New elephants are born into adjacent locations.
         // Get a list of adjacent free locations.
         int births = breed();
         if(births > 0 && canMate(currentField)) {
-            for (int b = 0; b < births && ! freeLocations.isEmpty(); b++) {
+            for (int b = 0; b < births && !freeLocations.isEmpty(); b++) {
                 Location loc = freeLocations.remove(0);
-                Hyena young = new Hyena(false, loc);
+                Elephant young = new Elephant(false, loc);
                 nextFieldState.placeOrganism(young, loc);
             }
         }
@@ -231,7 +237,8 @@ public class Hyena extends Animal
     }
 
     /**
-     * A hyena can breed if it has reached the breeding age.
+     * A elephant can breed if it has reached the breeding age.
+     * @return true if the elephant can breed, false otherwise.
      */
     private boolean canBreed()
     {
@@ -239,7 +246,7 @@ public class Hyena extends Animal
     }
 
     /**
-     * A hyena can mate if there is a hyena of opposite sex within MATE_RANGE
+     * A elephant can mate if there is a hyena of opposite sex within MATE_RANGE
      */
     private boolean canMate(Field field)
     {
@@ -249,13 +256,12 @@ public class Hyena extends Animal
         while(mateLocation == null && it.hasNext()) {
             Location loc = it.next();
             Organism organism = field.getOrganismAt(loc);
-            if(organism instanceof Hyena hyena) {
-                if(hyena.getSex() != getSex()) {
+            if(organism instanceof Elephant elephant) {
+                if(elephant.getSex() != getSex()) {
                     return true;
                 }
             }
         }
         return false;
     }
-    
 }
