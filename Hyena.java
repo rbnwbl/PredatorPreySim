@@ -76,32 +76,38 @@ public class Hyena extends Animal
     {
         incrementAge();
         incrementHunger();
-        if(isAlive() && ! isAsleep(time) ) {
-            List<Location> freeLocations =
+        if(isAlive()) {
+            if (isInfected()) {
+                infect(currentField);
+                decrementInfectionSteps();
+            }
+            if (! isAsleep(time)) {
+                List<Location> freeLocations =
                     nextFieldState.getFreeAdjacentLocations(getLocation());
-            if(! freeLocations.isEmpty()) {
-                giveBirth(currentField, nextFieldState, freeLocations);
-            }
-            Location nextLocation;
-            if (isActive(time)) {
-                nextLocation = findFood(currentField, ACTIVE_RANGE);
-            }
-            else {
-                nextLocation = findFood(currentField, 1);
-            }
-            // Move towards a source of food if found.
-            if(nextLocation == null && ! freeLocations.isEmpty()) {
-                // No food found - try to move to a free location.
-                nextLocation = freeLocations.remove(0);
-            }
-            // See if it was possible to move.
-            if(nextLocation != null) {
-                setLocation(nextLocation);
-                nextFieldState.placeOrganism(this, nextLocation);
-            }
-            else {
-                // Overcrowding.
-                setDead();
+                if(! freeLocations.isEmpty()) {
+                    giveBirth(currentField, nextFieldState, freeLocations);
+                }
+                Location nextLocation;
+                if (isActive(time)) {
+                    nextLocation = findFood(currentField, ACTIVE_RANGE);
+                }
+                else {
+                    nextLocation = findFood(currentField, 1);
+                }
+                // Move towards a source of food if found.
+                if(nextLocation == null && ! freeLocations.isEmpty()) {
+                    // No food found - try to move to a free location.
+                    nextLocation = freeLocations.remove(0);
+                }
+                // See if it was possible to move.
+                if(nextLocation != null) {
+                    setLocation(nextLocation);
+                    nextFieldState.placeOrganism(this, nextLocation);
+                }
+                else {
+                    // Overcrowding.
+                    setDead();
+                }
             }
         }
     }
@@ -146,10 +152,10 @@ public class Hyena extends Animal
     private boolean isActive(int time)
     {
         if (ACTIVE_TIME_START < ACTIVE_TIME_END) {
-            return (time > ACTIVE_TIME_START) && (time < ACTIVE_TIME_END);
+            return (time >= ACTIVE_TIME_START) && (time <= ACTIVE_TIME_END);
         }
         else {
-            return (time > ACTIVE_TIME_START) || (time < ACTIVE_TIME_END);
+            return (time >= ACTIVE_TIME_START) || (time <= ACTIVE_TIME_END);
         }
     }
 
@@ -161,10 +167,10 @@ public class Hyena extends Animal
     private boolean isAsleep(int time)
     {
         if (SLEEP_TIME_START < SLEEP_TIME_END) {
-            return (time > SLEEP_TIME_START) && (time < SLEEP_TIME_END);
+            return (time >= SLEEP_TIME_START) && (time <= SLEEP_TIME_END);
         }
         else {
-            return (time > SLEEP_TIME_START) || (time < SLEEP_TIME_END);
+            return (time >= SLEEP_TIME_START) || (time <= SLEEP_TIME_END);
         }
     }
 
@@ -177,7 +183,7 @@ public class Hyena extends Animal
      */
     private Location findFood(Field field, int range)
     {
-        List<Location> locations = field.getLocationsInRange(getLocation(), 1);
+        List<Location> locations = field.getLocationsInRange(getLocation(), range);
         Iterator<Location> it = locations.iterator();
         Location foodLocation = null;
         while(foodLocation == null && it.hasNext()) {

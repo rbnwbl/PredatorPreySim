@@ -1,3 +1,4 @@
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -8,10 +9,19 @@ import java.util.Random;
  */
 public abstract class Animal implements Organism
 {
+    // The number of steps infected
+    private static final int DISEASE_STEPS = 3;
+    private static final double INFECTION_PROBABILITY = 0.20;
+
     // Whether the animal is alive or not.
     private boolean alive;
     // The animal's position.
     private Location location;
+    // Whether the animal is infected by a disease or not.
+    // Animals that are infected die after given number of steps.
+    private boolean infected;
+    // Number of steps the animal has before dying when infected.
+    private int infectedSteps;
     // The animal's stamina.
     private int stamina;
     // The animal's sex. 'M' for 'Male', 'F' for 'Female'.
@@ -27,6 +37,7 @@ public abstract class Animal implements Organism
     {
         this.alive = true;
         this.location = location;
+        this.infected = false;
         // Randomise the stamina so population stamina varies.
         this.stamina = (int) (stamina *  rand.nextDouble(0.6, 1.3));
         // Randomise sex of the animal.
@@ -56,7 +67,7 @@ public abstract class Animal implements Organism
         alive = false;
         location = null;
     }
-    
+
     /**
      * Return the animal's location.
      * @return The animal's location.
@@ -82,4 +93,46 @@ public abstract class Animal implements Organism
     public char getSex() {
         return sex;
     }
+
+    /**
+     * Check whether the animal is infected or not.
+     * @return true if the animal is infected.
+     */
+    public boolean isInfected() {
+        return infected;
+    }
+
+    /**
+     * Indicate that the animal is infected by disease & initialise steps before death.
+     */
+    public void setInfected()
+    {
+        infected = true;
+        infectedSteps = DISEASE_STEPS;
+    }
+
+    protected void decrementInfectionSteps()
+    {
+        infectedSteps--;
+        if (infectedSteps == 0) {
+            setDead();
+        }
+    }
+
+    /**
+     * Try infecting adjacent animals.
+     */
+    protected void infect(Field field)
+    {
+        List<Location> locations = field.getAdjacentLocations(getLocation());
+        for (Location loc : locations) {
+            Organism organism = field.getOrganismAt(loc);
+            if(organism instanceof Animal animal) {
+                if(animal.isAlive() && rand.nextDouble() <= INFECTION_PROBABILITY) {
+                    animal.setInfected();
+                }
+            }
+        }
+    }
+
 }

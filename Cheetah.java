@@ -77,39 +77,45 @@ public class Cheetah extends Animal
     {
         incrementAge();
         incrementHunger();
-        if(isAlive() && ! isAsleep(time) ) {
-            List<Location> freeLocations =
+        if(isAlive()) {
+            if (isInfected()) {
+                infect(currentField);
+                decrementInfectionSteps();
+            }
+            if (! isAsleep(time)) {
+                List<Location> freeLocations =
                     nextFieldState.getFreeAdjacentLocations(getLocation());
-            if(! freeLocations.isEmpty()) {
-                giveBirth(currentField, nextFieldState, freeLocations);
-            }
-            Location nextLocation;
-            if (isActive(time)) {
-                nextLocation = findFood(currentField, ACTIVE_RANGE);
-            }
-            else {
-                nextLocation = findFood(currentField, 1);
-            }
-            // Move towards a source of food if found.
-            if(nextLocation == null && ! freeLocations.isEmpty()) {
-                // No food found - try to move to a free location.
-                nextLocation = freeLocations.remove(0);
-            }
-            // See if it was possible to move.
-            if(nextLocation != null) {
-                setLocation(nextLocation);
-                nextFieldState.placeOrganism(this, nextLocation);
-            }
-            else {
-                // Overcrowding.
-                setDead();
+                if(! freeLocations.isEmpty()) {
+                    giveBirth(currentField, nextFieldState, freeLocations);
+                }
+                Location nextLocation;
+                if (isActive(time)) {
+                    nextLocation = findFood(currentField, ACTIVE_RANGE);
+                }
+                else {
+                    nextLocation = findFood(currentField, 1);
+                }
+                // Move towards a source of food if found.
+                if(nextLocation == null && ! freeLocations.isEmpty()) {
+                    // No food found - try to move to a free location.
+                    nextLocation = freeLocations.remove(0);
+                }
+                // See if it was possible to move.
+                if(nextLocation != null) {
+                    setLocation(nextLocation);
+                    nextFieldState.placeOrganism(this, nextLocation);
+                }
+                else {
+                    // Overcrowding.
+                    setDead();
+                }
             }
         }
     }
 
     @Override
     public String toString() {
-        return "cheetah{" +
+        return "Cheetah{" +
                 "age=" + age +
                 ", alive=" + isAlive() +
                 ", location=" + getLocation() +
@@ -150,10 +156,10 @@ public class Cheetah extends Animal
         boolean inRange = false;
         while (i < ACTIVE_TIME_START.length && ! inRange) {
             if (ACTIVE_TIME_START[i] < ACTIVE_TIME_END[i]) {
-                inRange = (time > ACTIVE_TIME_START[i]) && (time < ACTIVE_TIME_END[i]);
+                inRange = (time >= ACTIVE_TIME_START[i]) && (time <= ACTIVE_TIME_END[i]);
             }
             else {
-                inRange = (time > ACTIVE_TIME_START[i]) || (time < ACTIVE_TIME_END[i]);
+                inRange = (time >= ACTIVE_TIME_START[i]) || (time <= ACTIVE_TIME_END[i]);
             }
             i++;
         }
@@ -168,10 +174,10 @@ public class Cheetah extends Animal
     private boolean isAsleep(int time)
     {
         if (SLEEP_TIME_START < SLEEP_TIME_END) {
-            return (time > SLEEP_TIME_START) && (time < SLEEP_TIME_END);
+            return (time >= SLEEP_TIME_START) && (time <= SLEEP_TIME_END);
         }
         else {
-            return (time > SLEEP_TIME_START) || (time < SLEEP_TIME_END);
+            return (time >= SLEEP_TIME_START) || (time <= SLEEP_TIME_END);
         }
     }
 
@@ -184,7 +190,7 @@ public class Cheetah extends Animal
      */
     private Location findFood(Field field, int range)
     {
-        List<Location> locations = field.getLocationsInRange(getLocation(), 1);
+        List<Location> locations = field.getLocationsInRange(getLocation(), range);
         Iterator<Location> it = locations.iterator();
         Location foodLocation = null;
         while(foodLocation == null && it.hasNext()) {
@@ -253,11 +259,13 @@ public class Cheetah extends Animal
     }
 
     /**
-     * A cheetah can mate if there is a cheetah of opposite sex within MATE_RANGE
+     * A cheetah can mate if there is a cheetah of opposite sex within MATE_RANGE.
+     * @param field
+     * @return Whether the 
      */
     private boolean canMate(Field field)
     {
-        List<Location> adjacent = field.getLocationsInRange(getLocation(),MATE_RANGE);
+        List<Location> adjacent = field.getLocationsInRange(getLocation(), MATE_RANGE);
         Iterator<Location> it = adjacent.iterator();
         Location mateLocation = null;
         while(mateLocation == null && it.hasNext()) {
@@ -271,5 +279,5 @@ public class Cheetah extends Animal
         }
         return false;
     }
-    
+
 }

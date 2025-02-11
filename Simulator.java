@@ -22,6 +22,8 @@ public class Simulator
     private static final double FRUIT_CREATION_PROBABILITY = 0.20;
     // The probability that a grass plant will be created in any given position.
     private static final double GRASS_CREATION_PROBABILITY = 0.36;
+    // The probability that an animal will be infected by a disease.
+    private static final double DISEASE_PROBABILITY = 0.01;
     
 
     // The current state of the field.
@@ -32,6 +34,7 @@ public class Simulator
     private Timer timer;
     // A graphical view of the simulation.
     private final SimulatorView view;
+    private Random rand = Randomizer.getRandom();
 
     /**
      * Construct a simulation field with default size.
@@ -100,6 +103,13 @@ public class Simulator
         List<Organism> organisms = field.getOrganisms();
         for (Organism anOrganism : organisms) {
             anOrganism.act(field, nextFieldState, timer.getTime());
+
+            // If the organism is an animal, randomly infect it.
+            if (anOrganism instanceof Animal animal) {
+                if (! animal.isInfected() && rand.nextDouble() <= DISEASE_PROBABILITY) {
+                    animal.setInfected();
+                }
+            }
         }
         
         // Replace the old state with the new one.
@@ -125,7 +135,6 @@ public class Simulator
      */
     private void populate()
     {
-        Random rand = Randomizer.getRandom();
         field.clear();
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
