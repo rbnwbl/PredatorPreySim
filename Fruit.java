@@ -7,7 +7,7 @@ public class Fruit extends Plant
     private static final int BREEDING_AGE = 5;
     private static final int MAX_AGE = 10;
     private static final double BREEDING_PROBABILITY = 0.14;
-    private static final int MAX_YIELD = 10;
+    private static final int MAX_YIELD = 6;
     private static final int NUTRITION = 4;
     private static final int MATE_RANGE = 2;
     private int age;
@@ -16,11 +16,11 @@ public class Fruit extends Plant
 
     public Fruit(boolean randomAge, Location location)
     {
+        super(location,NUTRITION);
         age = 0;
         if (randomAge) {
             age = rand.nextInt(MAX_AGE);
         }
-        super(location,NUTRITION);
     }
     public void act(Field currentField,Field nextFieldState, int time, Weather weather)
     {
@@ -61,7 +61,7 @@ public class Fruit extends Plant
     {
         // New plants are born into adjacent locations.
         // Get a list of adjacent free locations.
-        int births = breed();
+        int births = breed(weather.getRain());
         if(births > 0 && canMate(currentField,weather.getVisibility())) {
             for (int b = 0; b < births && !freeLocations.isEmpty(); b++) {
                 Location loc = freeLocations.remove(0);
@@ -76,10 +76,16 @@ public class Fruit extends Plant
      * if it can breed.
      * @return The number of births (may be zero).
      */
-    private int breed()
+    private int breed(boolean isRaining)
     {
         int births;
-        if(canBreed() && rand.nextDouble() <= BREEDING_PROBABILITY) {
+        double newBreedingProbability = BREEDING_PROBABILITY;
+        // More likely to breed if raining
+        if (isRaining) {
+            newBreedingProbability = newBreedingProbability * 1.5;
+        }
+
+        if(canBreed() && rand.nextDouble() <= newBreedingProbability) {
             births = rand.nextInt(MAX_YIELD) + 1;
         }
         else {

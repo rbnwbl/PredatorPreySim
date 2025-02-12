@@ -107,6 +107,13 @@ public abstract class Animal implements Organism
         infectedSteps = DISEASE_STEPS;
     }
 
+    public void disinfect(int temp, double staminaLevel)
+    {
+        if (temp > 28 && staminaLevel > 0.8) {
+            infected = false;
+        }
+    }
+
     protected void decrementInfectionSteps()
     {
         infectedSteps--;
@@ -118,13 +125,15 @@ public abstract class Animal implements Organism
     /**
      * Try infecting adjacent animals.
      */
-    protected void infect(Field field)
+    protected void infect(Field field, int temp)
     {
         List<Location> locations = field.getAdjacentLocations(getLocation());
+
+        double newInfectionProb = INFECTION_PROBABILITY - ((temp - 20)/100);
         for (Location loc : locations) {
             Organism organism = field.getOrganismAt(loc);
             if(organism instanceof Animal animal) {
-                if(animal.isAlive() && rand.nextDouble() <= INFECTION_PROBABILITY) {
+                if(animal.isAlive() && rand.nextDouble() <= newInfectionProb) {
                     animal.setInfected();
                 }
             }

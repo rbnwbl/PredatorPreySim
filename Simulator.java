@@ -23,7 +23,7 @@ public class Simulator
     // The probability that a grass plant will be created in any given position.
     private static final double GRASS_CREATION_PROBABILITY = 0.36;
     // The probability that an animal will be infected by a disease.
-    private static final double DISEASE_PROBABILITY = 0.01;
+    private static final double DISEASE_PROBABILITY = 0.1;
     
 
     // The current state of the field.
@@ -104,13 +104,16 @@ public class Simulator
         // the next step.
         Field nextFieldState = new Field(field.getDepth(), field.getWidth());
 
+        // Calculates the new disease probability: higher temp, less disease.
+        double newDiseaseProb = DISEASE_PROBABILITY - ((weather.getTemp() - 20)/100);
+
         List<Organism> organisms = field.getOrganisms();
         for (Organism anOrganism : organisms) {
             anOrganism.act(field, nextFieldState, timer.getTime(), weather);
 
             // If the organism is an animal, randomly infect it.
             if (anOrganism instanceof Animal animal) {
-                if (! animal.isInfected() && rand.nextDouble() <= DISEASE_PROBABILITY) {
+                if (! animal.isInfected() && rand.nextDouble() <= newDiseaseProb) {
                     animal.setInfected();
                 }
             }

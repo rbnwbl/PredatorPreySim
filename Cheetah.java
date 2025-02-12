@@ -77,7 +77,8 @@ public class Cheetah extends Animal
         decrementStamina();
         if(isAlive()) {
             if (isInfected()) {
-                infect(currentField);
+                disinfect(weather.getTemp(),stamina/MAX_STAMINA);
+                infect(currentField, weather.getTemp());
                 decrementInfectionSteps();
             }
             if (! isAsleep(time)) {
