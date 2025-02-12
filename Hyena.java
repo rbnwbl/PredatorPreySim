@@ -72,7 +72,7 @@ public class Hyena extends Animal
      * @param nextFieldState The updated field.
      * @param time The current time of the simulation.
      */
-    public void act(Field currentField, Field nextFieldState, int time)
+    public void act(Field currentField, Field nextFieldState, int time, Weather weather)
     {
         incrementAge();
         incrementHunger();
@@ -85,7 +85,7 @@ public class Hyena extends Animal
                 List<Location> freeLocations =
                     nextFieldState.getFreeAdjacentLocations(getLocation());
                 if(! freeLocations.isEmpty()) {
-                    giveBirth(currentField, nextFieldState, freeLocations);
+                    giveBirth(currentField, nextFieldState, freeLocations,weather);
                 }
                 Location nextLocation;
                 if (isActive(time)) {
@@ -205,12 +205,12 @@ public class Hyena extends Animal
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */
-    private void giveBirth(Field currentField, Field nextFieldState, List<Location> freeLocations)
+    private void giveBirth(Field currentField, Field nextFieldState, List<Location> freeLocations,Weather weather)
     {
         // New hyenaes are born into adjacent locations.
         // Get a list of adjacent free locations.
         int births = breed();
-        if(births > 0 && canMate(currentField)) {
+        if(births > 0 && canMate(currentField,weather.getVisibility())) {
             for (int b = 0; b < births && ! freeLocations.isEmpty(); b++) {
                 Location loc = freeLocations.remove(0);
                 Hyena young = new Hyena(false, loc);
@@ -247,9 +247,11 @@ public class Hyena extends Animal
     /**
      * A hyena can mate if there is a hyena of opposite sex within MATE_RANGE
      */
-    private boolean canMate(Field field)
+    private boolean canMate(Field field,int visibility)
     {
-        List<Location> adjacent = field.getLocationsInRange(getLocation(),MATE_RANGE);
+        // Takes visibility into account to calculate mate range and ensures > 0. 
+        int newMateRange = Math.max(1,MATE_RANGE + visibility);
+        List<Location> adjacent = field.getLocationsInRange(getLocation(),newMateRange);
         Iterator<Location> it = adjacent.iterator();
         Location mateLocation = null;
         while(mateLocation == null && it.hasNext()) {

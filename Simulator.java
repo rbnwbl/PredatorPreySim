@@ -32,6 +32,8 @@ public class Simulator
     private int step;
     // The timer to keep track of time of the simulation
     private Timer timer;
+    // The weather.
+    private Weather weather;
     // A graphical view of the simulation.
     private final SimulatorView view;
     private Random rand = Randomizer.getRandom();
@@ -61,6 +63,7 @@ public class Simulator
         field = new Field(depth, width);
         view = new SimulatorView(depth, width);
         timer = new Timer();
+        weather = new Weather();
 
         reset();
     }
@@ -96,13 +99,14 @@ public class Simulator
     {
         step++;
         timer.increment();
+        weather.change();
         // Use a separate Field to store the starting state of
         // the next step.
         Field nextFieldState = new Field(field.getDepth(), field.getWidth());
 
         List<Organism> organisms = field.getOrganisms();
         for (Organism anOrganism : organisms) {
-            anOrganism.act(field, nextFieldState, timer.getTime());
+            anOrganism.act(field, nextFieldState, timer.getTime(),weather);
 
             // If the organism is an animal, randomly infect it.
             if (anOrganism instanceof Animal animal) {

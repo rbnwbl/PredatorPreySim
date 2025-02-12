@@ -24,14 +24,14 @@ public class Grass extends Plant
         super(location,NUTRITION);
     }
 
-    public void act(Field currentField,Field nextFieldState, int time)
+    public void act(Field currentField,Field nextFieldState, int time, Weather weather)
     {
         incrementAge();
         if (isAlive()) {
             List<Location> freeLocations =
                     nextFieldState.getFreeAdjacentLocations(getLocation());
             if(! freeLocations.isEmpty()) {
-                giveBirth(currentField, nextFieldState, freeLocations);
+                giveBirth(currentField, nextFieldState, freeLocations, weather);
             }
         }
     }
@@ -59,12 +59,12 @@ public class Grass extends Plant
      * New plants will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
      */
-    private void giveBirth(Field currentField, Field nextFieldState, List<Location> freeLocations)
+    private void giveBirth(Field currentField, Field nextFieldState, List<Location> freeLocations, Weather weather)
     {
         // New plants are born into adjacent locations.
         // Get a list of adjacent free locations.
         int births = breed();
-        if(births > 0 && canMate(currentField)) {
+        if(births > 0 && canMate(currentField,weather.getVisibility())) {
             for (int b = 0; b < births && !freeLocations.isEmpty(); b++) {
                 Location loc = freeLocations.remove(0);
                 Grass young = new Grass(false,loc);
@@ -102,9 +102,10 @@ public class Grass extends Plant
     /**
      * A plant can mate if there is a plant of opposite sex within MATE_RANGE
      */
-    private boolean canMate(Field field)
+    private boolean canMate(Field field,int visibility)
     {
-        List<Location> adjacent = field.getLocationsInRange(getLocation(),MATE_RANGE);
+        int newMateRange = Math.max(1,MATE_RANGE + visibility);
+        List<Location> adjacent = field.getLocationsInRange(getLocation(),newMateRange);
         Iterator<Location> it = adjacent.iterator();
         Location mateLocation = null;
         while(mateLocation == null && it.hasNext()) {

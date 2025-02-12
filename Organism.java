@@ -9,5 +9,5 @@ interface Organism
      * @param nextFieldState The new state being built.
      * @param time The current time in the simulation.
      */
-    void act(Field currentField,Field nextFieldState, int time);
+    void act(Field currentField,Field nextFieldState, int time,Weather weather);
 }
