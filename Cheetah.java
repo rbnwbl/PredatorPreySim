@@ -34,6 +34,7 @@ public class Cheetah extends Animal
     private static final int HYENA_FOOD_VALUE = 7;
     // The food value of a single zebra.
     private static final int ZEBRA_FOOD_VALUE = 10;
+
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
 
@@ -79,7 +80,8 @@ public class Cheetah extends Animal
         incrementHunger();
         if(isAlive()) {
             if (isInfected()) {
-                infect(currentField);
+                disinfect(weather.getTemp(),stamina/MAX_STAMINA);
+                infect(currentField, weather.getTemp());
                 decrementInfectionSteps();
             }
             if (! isAsleep(time)) {

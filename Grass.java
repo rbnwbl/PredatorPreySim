@@ -7,7 +7,7 @@ public class Grass extends Plant
     private static final int BREEDING_AGE = 10;
     private static final int MAX_AGE = 20;
     private static final double BREEDING_PROBABILITY = 0.12;
-    private static final int MAX_YIELD = 25;
+    private static final int MAX_YIELD = 8;
     private static final int NUTRITION = 1;
     private static final int MATE_RANGE = 2;
 
@@ -17,11 +17,12 @@ public class Grass extends Plant
 
     public Grass(boolean randomAge, Location location)
     {
+        super(location,NUTRITION);
         age = 0;
         if (randomAge) {
             age = rand.nextInt(MAX_AGE);
         }
-        super(location,NUTRITION);
+        
     }
 
     public void act(Field currentField,Field nextFieldState, int time, Weather weather)

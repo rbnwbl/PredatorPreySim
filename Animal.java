@@ -23,7 +23,7 @@ public abstract class Animal implements Organism
     // Number of steps the animal has before dying when infected.
     private int infectedSteps;
     // The animal's stamina.
-    private int stamina;
+    protected int stamina;
     // The animal's sex. 'M' for 'Male', 'F' for 'Female'.
     private final char sex;
     // Randomiser to introduce variation into the population.
@@ -111,6 +111,13 @@ public abstract class Animal implements Organism
         infectedSteps = DISEASE_STEPS;
     }
 
+    public void disinfect(int temp, double staminaLevel)
+    {
+        if (temp > 28 && staminaLevel > 0.8) {
+            infected = false;
+        }
+    }
+
     protected void decrementInfectionSteps()
     {
         infectedSteps--;
@@ -122,13 +129,15 @@ public abstract class Animal implements Organism
     /**
      * Try infecting adjacent animals.
      */
-    protected void infect(Field field)
+    protected void infect(Field field, int temp)
     {
         List<Location> locations = field.getAdjacentLocations(getLocation());
+
+        double newInfectionProb = INFECTION_PROBABILITY - ((temp - 20)/100);
         for (Location loc : locations) {
             Organism organism = field.getOrganismAt(loc);
             if(organism instanceof Animal animal) {
-                if(animal.isAlive() && rand.nextDouble() <= INFECTION_PROBABILITY) {
+                if(animal.isAlive() && rand.nextDouble() <= newInfectionProb) {
                     animal.setInfected();
                 }
             }

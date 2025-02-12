@@ -81,7 +81,8 @@ public class Lion extends Animal
         incrementHunger();
         if(isAlive()) {
             if (isInfected()) {
-                infect(currentField);
+                disinfect(weather.getTemp(),stamina/MAX_STAMINA);
+                infect(currentField, weather.getTemp());
                 decrementInfectionSteps();
             }
             if (! isAsleep(time)) {
