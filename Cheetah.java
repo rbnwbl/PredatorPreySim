@@ -30,22 +30,19 @@ public class Cheetah extends Animal
     // The start & end time of the period cheetahs sleep in a day.
     private static final int SLEEP_TIME_START = 10;
     private static final int SLEEP_TIME_END = 18;
-    // The food value of a single zebra.
-    private static final int HYENA_FOOD_VALUE = 7;
-    // The food value of a single zebra.
-    private static final int ZEBRA_FOOD_VALUE = 10;
-
+    // The food value of a single cheetah.
+    private static final int NUTRITION = 7;
+    // The maximum stamina of an cheetah.
+    private static final int MAX_STAMINA = 15;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
-
-    private static final int BASE_STAMINA = 10;
     
     // Individual characteristics (instance fields).
 
+    // The cheetah's stamina.
+    private int stamina;
     // The cheetah's age.
     private int age;
-    // The cheetah's food level, which is increased by eating zebras.
-    private int foodLevel;
 
     /**
      * Create a cheetah. A cheetah can be created as a new born (age zero
@@ -56,14 +53,14 @@ public class Cheetah extends Animal
      */
     public Cheetah(boolean randomAge, Location location)
     {
-        super(location, BASE_STAMINA);
+        super(location);
         if(randomAge) {
             age = rand.nextInt(MAX_AGE);
         }
         else {
             age = 0;
         }
-        foodLevel = rand.nextInt(ZEBRA_FOOD_VALUE);
+        stamina = rand.nextInt(MAX_STAMINA);;
     }
     
     /**
@@ -77,7 +74,7 @@ public class Cheetah extends Animal
     public void act(Field currentField, Field nextFieldState, int time, Weather weather)
     {
         incrementAge();
-        incrementHunger();
+        decrementStamina();
         if(isAlive()) {
             if (isInfected()) {
                 disinfect(weather.getTemp(),stamina/MAX_STAMINA);
@@ -121,7 +118,7 @@ public class Cheetah extends Animal
                 "age=" + age +
                 ", alive=" + isAlive() +
                 ", location=" + getLocation() +
-                ", foodLevel=" + foodLevel +
+                ", stamina=" + stamina +
                 '}';
     }
 
@@ -137,16 +134,20 @@ public class Cheetah extends Animal
     }
     
     /**
-     * Make this cheetah more hungry. This could result in the cheetah's death.
+     * Decrement stamina of this cheetah. This could result in the cheetah's death.
      */
-    private void incrementHunger()
+    private void decrementStamina()
     {
-        foodLevel--;
-        if(foodLevel <= 0) {
+        stamina--;
+        if(stamina <= 0) {
             setDead();
         }
     }
     
+    public static int getNutrition() {
+        return NUTRITION;
+    }
+
     /**
      * Check if it is the cheetah's active time.
      * @param time The time.
@@ -201,17 +202,20 @@ public class Cheetah extends Animal
             if(organism instanceof Hyena hyena) {
                 if(hyena.isAlive()) {
                     hyena.setDead();
-                    foodLevel = HYENA_FOOD_VALUE;
+                    stamina += Hyena.getNutrition();
                     foodLocation = loc;
                 }
             }
             if(organism instanceof Zebra zebra) {
                 if(zebra.isAlive()) {
                     zebra.setDead();
-                    foodLevel = ZEBRA_FOOD_VALUE;
+                    stamina += Zebra.getNutrition();
                     foodLocation = loc;
                 }
             }
+        }
+        if (stamina > MAX_STAMINA) {
+            stamina = MAX_STAMINA;
         }
         return foodLocation;
     }

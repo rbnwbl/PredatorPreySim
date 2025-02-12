@@ -30,23 +30,19 @@ public class Lion extends Animal
     // The start & end time of the period lions sleep in a day.
     private static final int SLEEP_TIME_START = 10;
     private static final int SLEEP_TIME_END = 20;
-    // The food value of a single zebra.
-    private static final int HYENA_FOOD_VALUE = 7;
-    // The food value of a single zebra.
-    private static final int ZEBRA_FOOD_VALUE = 10;
-    // The food value of a single elephant.
-    private static final int ELEPHANT_FOOD_VALUE = 11;
+    // The food value of a single lion.
+    private static final int NUTRITION = 10;
+    // The maximum stamina of a lion.
+    private static final int MAX_STAMINA = 15;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
-
-    private static final int BASE_STAMINA = 10;
     
     // Individual characteristics (instance fields).
 
+    // The lion's stamina, which is increased by eating food.
+    private int stamina;
     // The lion's age.
     private int age;
-    // The lion's food level, which is increased by eating zebras.
-    private int foodLevel;
 
     /**
      * Create a lion. A lion can be created as a new born (age zero
@@ -57,14 +53,14 @@ public class Lion extends Animal
      */
     public Lion(boolean randomAge, Location location)
     {
-        super(location, BASE_STAMINA);
+        super(location);
         if(randomAge) {
             age = rand.nextInt(MAX_AGE);
         }
         else {
             age = 0;
         }
-        foodLevel = rand.nextInt(ZEBRA_FOOD_VALUE);
+        stamina = rand.nextInt(MAX_STAMINA);
     }
     
     /**
@@ -78,7 +74,7 @@ public class Lion extends Animal
     public void act(Field currentField, Field nextFieldState, int time, Weather weather)
     {
         incrementAge();
-        incrementHunger();
+        decrementStamina();
         if(isAlive()) {
             if (isInfected()) {
                 disinfect(weather.getTemp(),stamina/MAX_STAMINA);
@@ -122,7 +118,7 @@ public class Lion extends Animal
                 "age=" + age +
                 ", alive=" + isAlive() +
                 ", location=" + getLocation() +
-                ", foodLevel=" + foodLevel +
+                ", stamina=" + stamina +
                 '}';
     }
 
@@ -138,16 +134,20 @@ public class Lion extends Animal
     }
     
     /**
-     * Make this lion more hungry. This could result in the lion's death.
+     * Decrement stamina of this lion. This could result in the lion's death.
      */
-    private void incrementHunger()
+    private void decrementStamina()
     {
-        foodLevel--;
-        if(foodLevel <= 0) {
+        stamina--;
+        if(stamina <= 0) {
             setDead();
         }
     }
     
+    public static int getNutrition() {
+        return NUTRITION;
+    }
+
     /**
      * Check if it is the lion's active time.
      * @param time The time.
@@ -196,24 +196,27 @@ public class Lion extends Animal
             if(organism instanceof Hyena hyena) {
                 if(hyena.isAlive()) {
                     hyena.setDead();
-                    foodLevel = HYENA_FOOD_VALUE;
+                    stamina += Hyena.getNutrition();
                     foodLocation = loc;
                 }
             }
             if(organism instanceof Zebra zebra) {
                 if(zebra.isAlive()) {
                     zebra.setDead();
-                    foodLevel = ZEBRA_FOOD_VALUE;
+                    stamina += Zebra.getNutrition();
                     foodLocation = loc;
                 }
             }
             if(organism instanceof Elephant elephant) {
                 if(elephant.isAlive()) {
                     elephant.setDead();
-                    foodLevel = ELEPHANT_FOOD_VALUE;
+                    stamina += Elephant.getNutrition();
                     foodLocation = loc;
                 }
             }
+        }
+        if (stamina > MAX_STAMINA) {
+            stamina = MAX_STAMINA;
         }
         return foodLocation;
     }

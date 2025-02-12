@@ -22,8 +22,6 @@ public abstract class Animal implements Organism
     private boolean infected;
     // Number of steps the animal has before dying when infected.
     private int infectedSteps;
-    // The animal's stamina.
-    protected int stamina;
     // The animal's sex. 'M' for 'Male', 'F' for 'Female'.
     private final char sex;
     // Randomiser to introduce variation into the population.
@@ -33,13 +31,11 @@ public abstract class Animal implements Organism
      * Constructor for objects of class Animal.
      * @param location The animal's location.
      */
-    public Animal(Location location,int stamina)
+    public Animal(Location location)
     {
         this.alive = true;
         this.location = location;
         this.infected = false;
-        // Randomise the stamina so population stamina varies.
-        this.stamina = (int) (stamina *  rand.nextDouble(0.6, 1.3));
         // Randomise sex of the animal.
         if (rand.nextDouble() < 0.5) {
             sex = 'M';

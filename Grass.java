@@ -22,7 +22,6 @@ public class Grass extends Plant
         if (randomAge) {
             age = rand.nextInt(MAX_AGE);
         }
-        
     }
 
     public void act(Field currentField,Field nextFieldState, int time, Weather weather)

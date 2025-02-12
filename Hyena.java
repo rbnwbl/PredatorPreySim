@@ -30,20 +30,19 @@ public class Hyena extends Animal
     // The start & end time of the period hyenas sleep in a day.
     private static final int SLEEP_TIME_START = 12;
     private static final int SLEEP_TIME_END = 15;
-    // The food value of a single zebra. In effect, this is the
-    // number of steps a hyena can go before it has to eat again.
-    private static final int ZEBRA_FOOD_VALUE = 9;
+    // The food value of a single hyena.
+    private static final int NUTRITION = 7;
+    // The maximum stamina of a hyena.
+    private static final int MAX_STAMINA = 10;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
-
-    private static final int BASE_STAMINA = 10;
     
     // Individual characteristics (instance fields).
 
+    // The hyena's stamina.
+    private int stamina;
     // The hyena's age.
     private int age;
-    // The hyena's food level, which is increased by eating zebras.
-    private int foodLevel;
 
     /**
      * Create a hyena. A hyena can be created as a new born (age zero
@@ -54,14 +53,14 @@ public class Hyena extends Animal
      */
     public Hyena(boolean randomAge, Location location)
     {
-        super(location, BASE_STAMINA);
+        super(location);
         if(randomAge) {
             age = rand.nextInt(MAX_AGE);
         }
         else {
             age = 0;
         }
-        foodLevel = rand.nextInt(ZEBRA_FOOD_VALUE);
+        stamina = rand.nextInt(MAX_STAMINA);
     }
     
     /**
@@ -75,7 +74,7 @@ public class Hyena extends Animal
     public void act(Field currentField, Field nextFieldState, int time, Weather weather)
     {
         incrementAge();
-        incrementHunger();
+        decrementStamina();
         if(isAlive()) {
             if (isInfected()) {
                 disinfect(weather.getTemp(),stamina/MAX_STAMINA);
@@ -119,7 +118,7 @@ public class Hyena extends Animal
                 "age=" + age +
                 ", alive=" + isAlive() +
                 ", location=" + getLocation() +
-                ", foodLevel=" + foodLevel +
+                ", stamina=" + stamina +
                 '}';
     }
 
@@ -135,14 +134,18 @@ public class Hyena extends Animal
     }
     
     /**
-     * Make this hyena more hungry. This could result in the hyena's death.
+     * Decrement stamina of this hyena. This could result in the hyena's death.
      */
-    private void incrementHunger()
+    private void decrementStamina()
     {
-        foodLevel--;
-        if(foodLevel <= 0) {
+        stamina--;
+        if(stamina <= 0) {
             setDead();
         }
+    }
+
+    public static int getNutrition() {
+        return NUTRITION;
     }
     
     /**
@@ -193,10 +196,13 @@ public class Hyena extends Animal
             if(organism instanceof Zebra zebra) {
                 if(zebra.isAlive()) {
                     zebra.setDead();
-                    foodLevel = ZEBRA_FOOD_VALUE;
+                    stamina = Zebra.getNutrition();
                     foodLocation = loc;
                 }
             }
+        }
+        if (stamina > MAX_STAMINA) {
+            stamina = MAX_STAMINA;
         }
         return foodLocation;
     }

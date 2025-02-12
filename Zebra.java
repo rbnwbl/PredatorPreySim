@@ -30,23 +30,19 @@ public class Zebra extends Animal
     // The start & end time of the period hyenas sleep in a day.
     private static final int SLEEP_TIME_START = 23;
     private static final int SLEEP_TIME_END = 5;
-    // The food value of a single zebra. In effect, this is the
-    // number of steps a hyena can go before it has to eat again.
-    // The food value of a single grass.
-    private static final int GRASS_FOOD_VALUE = 3;
-    // The food value of a single grass.
-    private static final int FRUIT_FOOD_VALUE = 5;
+    // The food value of a single zebra.
+    private static final int NUTRITION = 10;
+    // The maximum stamina of a zebra.
+    private static final int MAX_STAMINA = 15;
     // A shared random number generator to control breeding.
     private static final Random rand = Randomizer.getRandom();
-    //
-    private static final int BASE_STAMINA = 15;
     
     // Individual characteristics (instance fields).
     
+    // The zebra's stamina.
+    private int stamina;
     // The zebra's age.
     private int age;
-    // The zebra's food level, which is increased by eating grass & fruits.
-    private int foodLevel;
 
     /**
      * Create a new zebra. A zebra may be created with age
@@ -57,12 +53,12 @@ public class Zebra extends Animal
      */
     public Zebra(boolean randomAge, Location location)
     {
-        super(location, BASE_STAMINA);
+        super(location);
         age = 0;
         if(randomAge) {
             age = rand.nextInt(MAX_AGE);
         }
-        foodLevel = rand.nextInt(GRASS_FOOD_VALUE);
+        stamina = rand.nextInt(MAX_STAMINA);
     }
     
     /**
@@ -72,10 +68,10 @@ public class Zebra extends Animal
      * @param nextFieldState The updated field.
      * @param time The current time of the simulation.
      */
-    public void act(Field currentField, Field nextFieldState, int time,Weather weather)
+    public void act(Field currentField, Field nextFieldState, int time, Weather weather)
     {
         incrementAge();
-        incrementHunger();
+        decrementStamina();
         if(isAlive()) {
             if (isInfected()) {
                 disinfect(weather.getTemp(),stamina/MAX_STAMINA);
@@ -135,16 +131,20 @@ public class Zebra extends Animal
     }
 
     /**
-     * Make this zebra more hungry. This could result in the zebra's death.
+     * Decrement stamina of this zebra. This could result in the zebra's death.
      */
-    private void incrementHunger()
+    private void decrementStamina()
     {
-        foodLevel--;
-        if(foodLevel <= 0) {
+        stamina--;
+        if(stamina <= 0) {
             setDead();
         }
     }
     
+    public static int getNutrition() {
+        return NUTRITION;
+    }
+
     /**
      * Check if it is the zebra's active time.
      * @param time The time.
@@ -189,20 +189,16 @@ public class Zebra extends Animal
         while(foodLocation == null && it.hasNext()) {
             Location loc = it.next();
             Organism organism = field.getOrganismAt(loc);
-            if(organism instanceof Grass grass) {
-                if(grass.isAlive()) {
-                    grass.setDead();
-                    foodLevel = GRASS_FOOD_VALUE;
+            if(organism instanceof Plant plant) {
+                if(plant.isAlive()) {
+                    plant.setDead();
+                    stamina = plant.getNutrition();
                     foodLocation = loc;
                 }
             }
-            if(organism instanceof Fruit fruit) {
-                if(fruit.isAlive()) {
-                    fruit.setDead();
-                    foodLevel = FRUIT_FOOD_VALUE;
-                    foodLocation = loc;
-                }
-            }
+        }
+        if (stamina > MAX_STAMINA) {
+            stamina = MAX_STAMINA;
         }
         return foodLocation;
     }
@@ -255,7 +251,7 @@ public class Zebra extends Animal
     /**
      * A zebra can mate if there is a hyena of opposite sex within MATE_RANGE
      */
-    private boolean canMate(Field field,int visibility)
+    private boolean canMate(Field field, int visibility)
     {
         int newMateRange = Math.max(1,MATE_RANGE + visibility);
         List<Location> adjacent = field.getLocationsInRange(getLocation(),newMateRange);

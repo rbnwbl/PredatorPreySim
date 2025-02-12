@@ -15,7 +15,7 @@ public abstract class Plant implements Organism {
     // The plant's age.
     protected int age;
     // The plant's nutrition value.
-    private int nutrition;
+    private final int nutrition;
     
     private static final Random rand = Randomizer.getRandom();
     /**
@@ -31,7 +31,7 @@ public abstract class Plant implements Organism {
     }
 
     /**
-     *  @return whether the animal is alive or not.
+     *  @return whether the plant is alive or not.
      */
     public boolean isAlive() 
     {
@@ -51,5 +51,9 @@ public abstract class Plant implements Organism {
 
     public char getSex() {
         return sex;
+    }
+
+    public int getNutrition() {
+        return nutrition;
     }
 }
