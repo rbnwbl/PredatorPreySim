@@ -106,7 +106,7 @@ public class Simulator
 
         List<Organism> organisms = field.getOrganisms();
         for (Organism anOrganism : organisms) {
-            anOrganism.act(field, nextFieldState, timer.getTime(),weather);
+            anOrganism.act(field, nextFieldState, timer.getTime(), weather);
 
             // If the organism is an animal, randomly infect it.
             if (anOrganism instanceof Animal animal) {
