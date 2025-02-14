@@ -6,7 +6,7 @@ import java.util.Random;
  * A simple model of a hyena.
  * hyenas age, move, eat zebras, and die.
  * 
- * @author David J. Barnes and Michael Kölling
+ * @author Yiun Kim and Reuben Weibel
  * @version 7.1
  */
 public class Hyena extends Animal
@@ -70,6 +70,7 @@ public class Hyena extends Animal
      * @param currentField The field currently occupied.
      * @param nextFieldState The updated field.
      * @param time The current time of the simulation.
+     * @param weather The current state of the weather.
      */
     public void act(Field currentField, Field nextFieldState, int time, Weather weather)
     {
