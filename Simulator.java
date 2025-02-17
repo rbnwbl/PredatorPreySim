@@ -17,13 +17,13 @@ public class Simulator
     // The probability that a lion will be created in any given grid position.
     private static final double LION_CREATION_PROBABILITY = 0.02;
     // The probability that a cheetah will be created in any given grid position.
-    private static final double CHEETAH_CREATION_PROBABILITY = 0.02;
+    private static final double CHEETAH_CREATION_PROBABILITY = 0.04;
     // The probability that a hyena will be created in any given grid position.
-    private static final double HYENA_CREATION_PROBABILITY = 0.03;
+    private static final double HYENA_CREATION_PROBABILITY = 0.05;
     // The probability that a zebra will be created in any given position.
     private static final double ZEBRA_CREATION_PROBABILITY = 0.14;
     // The probability that a elephant will be created in any given grid position.
-    private static final double ELEPHANT_CREATION_PROBABILITY = 0.02;
+    private static final double ELEPHANT_CREATION_PROBABILITY = 0.16;
     // The probability that a fruit plant will be created in any given position.
     private static final double FRUIT_CREATION_PROBABILITY = 0.20;
     // The probability that a grass plant will be created in any given position.
