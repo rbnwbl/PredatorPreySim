@@ -14,10 +14,16 @@ public class Simulator
     private static final int DEFAULT_WIDTH = 120;
     // The default depth of the grid.
     private static final int DEFAULT_DEPTH = 80;
+    // The probability that a lion will be created in any given grid position.
+    private static final double LION_CREATION_PROBABILITY = 0.02;
+    // The probability that a cheetah will be created in any given grid position.
+    private static final double CHEETAH_CREATION_PROBABILITY = 0.02;
     // The probability that a hyena will be created in any given grid position.
-    private static final double HYENA_CREATION_PROBABILITY = 0.04;
+    private static final double HYENA_CREATION_PROBABILITY = 0.03;
     // The probability that a zebra will be created in any given position.
     private static final double ZEBRA_CREATION_PROBABILITY = 0.14;
+    // The probability that a elephant will be created in any given grid position.
+    private static final double ELEPHANT_CREATION_PROBABILITY = 0.02;
     // The probability that a fruit plant will be created in any given position.
     private static final double FRUIT_CREATION_PROBABILITY = 0.20;
     // The probability that a grass plant will be created in any given position.
@@ -146,8 +152,17 @@ public class Simulator
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
                 double roll = rand.nextDouble();
-                // The sex of the organism being created.
-                if(roll <= HYENA_CREATION_PROBABILITY) {
+                if(roll <= LION_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Lion lion = new Lion(true, location);
+                    field.placeOrganism(lion, location);
+                }
+                else if(roll <= CHEETAH_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Cheetah cheetah = new Cheetah(true, location);
+                    field.placeOrganism(cheetah, location);
+                }
+                else if(roll <= HYENA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
                     Hyena hyena = new Hyena(true, location);
                     field.placeOrganism(hyena, location);
@@ -156,6 +171,11 @@ public class Simulator
                     Location location = new Location(row, col);
                     Zebra zebra = new Zebra(true, location);
                     field.placeOrganism(zebra, location);
+                }
+                else if(roll <= ELEPHANT_CREATION_PROBABILITY) {
+                    Location location = new Location(row, col);
+                    Elephant elephant = new Elephant(true, location);
+                    field.placeOrganism(elephant, location);
                 }
                 else if (roll <= FRUIT_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
