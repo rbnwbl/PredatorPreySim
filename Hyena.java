@@ -78,6 +78,7 @@ public class Hyena extends Animal
         decrementStamina();
         if(isAlive()) {
             if (isInfected()) {
+                // stamina/MAX_STAMINA = stamina percentage
                 disinfect(weather.getTemp(),stamina/MAX_STAMINA);
                 infect(currentField,weather.getTemp());
                 decrementInfectionSteps();
@@ -184,6 +185,7 @@ public class Hyena extends Animal
      * Look for zebras adjacent to the current location.
      * Only the first live zebra is eaten.
      * @param field The field currently occupied.
+     * @param range The range in which the animal can find food.
      * @return Where food was found, or null if it wasn't.
      */
     private Location findFood(Field field, int range)
@@ -212,6 +214,7 @@ public class Hyena extends Animal
      * Check whether this hyena is to give birth at this step.
      * New births will be made into free adjacent locations.
      * @param freeLocations The locations that are free in the current field.
+     * @param weather The current state of the weather.
      */
     private void giveBirth(Field currentField, Field nextFieldState, List<Location> freeLocations,Weather weather)
     {
@@ -253,7 +256,9 @@ public class Hyena extends Animal
     }
 
     /**
-     * A hyena can mate if there is a hyena of opposite sex within MATE_RANGE
+     * A hyena can mate if there is a hyena of opposite sex within MATE_RANGE.
+     * @param field The current field.
+     * @param visibility The current visibility given by Weather.
      */
     private boolean canMate(Field field,int visibility)
     {

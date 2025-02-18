@@ -138,7 +138,7 @@ public class Simulator
         
     }
     /**
-     * Randomly populate the field with hyenaes and zebras.
+     * Randomly populate the field with all species.
      */
     private void populate()
     {
@@ -146,7 +146,6 @@ public class Simulator
         for(int row = 0; row < field.getDepth(); row++) {
             for(int col = 0; col < field.getWidth(); col++) {
                 double roll = rand.nextDouble();
-                // The sex of the organism being created.
                 if(roll <= HYENA_CREATION_PROBABILITY) {
                     Location location = new Location(row, col);
                     Hyena hyena = new Hyena(true, location);

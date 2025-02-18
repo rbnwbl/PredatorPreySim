@@ -144,8 +144,8 @@ public class Fruit extends Plant
 
     /**
      * A plant can mate if there is a plant of opposite sex within MATE_RANGE.
-     * @param field The field the grass is currently in.
-     * @param visibility The current visibility given by the member.
+     * @param field The current field.
+     * @param visibility The current visibility given by Weather.
      */
     private boolean canMate(Field field, int visibility)
     {
