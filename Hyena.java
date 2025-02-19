@@ -146,6 +146,10 @@ public class Hyena extends Animal
         }
     }
 
+    /**
+     * Return the nutrition value of a hyena. This is the amount of stamina increase when another species eat a hyena.
+     * @return The nutrition constant of a hyena.
+     */
     public static int getNutrition() {
         return NUTRITION;
     }
@@ -179,7 +183,6 @@ public class Hyena extends Animal
             return (time >= SLEEP_TIME_START) || (time <= SLEEP_TIME_END);
         }
     }
-
 
     /**
      * Look for zebras adjacent to the current location.

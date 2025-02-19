@@ -146,6 +146,10 @@ public class Lion extends Animal
         }
     }
     
+    /**
+     * Return the nutrition value of a lion. This is the amount of stamina increase when another species eat a lion.
+     * @return The nutrition constant of a lion.
+     */
     public static int getNutrition() {
         return NUTRITION;
     }

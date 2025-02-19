@@ -143,6 +143,10 @@ public class Elephant extends Animal
         }
     }
     
+    /**
+     * Return the nutrition value of an elephant. This is the amount of stamina increase when another species eat an elephant.
+     * @return The nutrition constant of an elephant.
+     */
     public static int getNutrition() {
         return NUTRITION;
     }

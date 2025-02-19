@@ -143,6 +143,10 @@ public class Zebra extends Animal
         }
     }
     
+    /**
+     * Return the nutrition value of a zebra. This is the amount of stamina increase when another species eat a zebra.
+     * @return The nutrition constant of a zebra.
+     */
     public static int getNutrition() {
         return NUTRITION;
     }

@@ -55,10 +55,18 @@ public abstract class Plant implements Organism {
         return location;
     }
 
+    /**
+     * Return the plant's sex.
+     * @return The plant's sex.
+     */
     public char getSex() {
         return sex;
     }
 
+    /**
+     * Return the nutrition value of the plant. This is the amount of stamina increase when another species eat a plant.
+     * @return The nutrition of the plant.
+     */
     public int getNutrition() {
         return nutrition;
     }

@@ -146,6 +146,10 @@ public class Cheetah extends Animal
         }
     }
     
+    /**
+     * Return the nutrition value of a cheetah. This is the amount of stamina increase when another species eat a cheetah.
+     * @return The nutrition constant of a cheetah.
+     */
     public static int getNutrition() {
         return NUTRITION;
     }

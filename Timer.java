@@ -8,9 +8,9 @@ import java.util.Random;
  */
 public class Timer
 {
+    // Time is stored in hours.
     private int hour;
     private static final Random rand = Randomizer.getRandom();
-
 
     /**
      * Constructor for objects of class Timer
