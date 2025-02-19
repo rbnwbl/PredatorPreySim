@@ -144,7 +144,7 @@ public class Simulator
         
     }
     /**
-     * Randomly populate the field with hyenaes and zebras.
+     * Randomly populate the field with all species.
      */
     private void populate()
     {

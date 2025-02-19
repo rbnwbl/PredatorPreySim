@@ -107,6 +107,11 @@ public abstract class Animal implements Organism
         infectedSteps = DISEASE_STEPS;
     }
 
+    /**
+     * Remove the infection and it's effects from the animal given the correct conditions.
+     * @param temp The current temperature
+     * @param staminaLevel The animal's current stamina percentage (stamina/MAX_STAMINA)
+     */
     public void disinfect(int temp, double staminaLevel)
     {
         if (temp > 28 && staminaLevel > 0.8) {
@@ -114,6 +119,9 @@ public abstract class Animal implements Organism
         }
     }
 
+    /**
+     * Decrement the amount of steps an infected animal has until it dies.
+     */
     protected void decrementInfectionSteps()
     {
         infectedSteps--;
@@ -124,6 +132,8 @@ public abstract class Animal implements Organism
 
     /**
      * Try infecting adjacent animals.
+     * @param field The current field.
+     * @param temp The current temperature given by weather.
      */
     protected void infect(Field field, int temp)
     {

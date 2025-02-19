@@ -38,12 +38,18 @@ public abstract class Plant implements Organism {
         return alive;
     }
     
+    /**
+     * Kill this plant and take it off the map.
+     */
     protected void setDead() 
     {
         location = null;
         alive = false;
     }
     
+    /**
+     * @return The plant's location
+     */
     public Location getLocation() 
     {
         return location;
